@@ -1,0 +1,786 @@
+10f,#080808 70%);box-shadow:0 35px 100px rgba(0,0,0,.68),0 0 50px rgba(212,175,55,.08)}
+.command-head{display:flex;align-items:center;gap:10px;padding:13px;border-bottom:1px solid rgba(212,175,55,.12)}
+.command-head:before{content:"⌕";color:var(--gold);font-size:20px}
+.command-input{flex:1;border:0;background:transparent;color:#f1eadc;font-size:15px;outline:0;padding:7px 2px}
+.command-input::placeholder{color:#6f6a62}
+.command-close{border:1px solid rgba(255,255,255,.08);background:#0b0b0b;color:#8d877e;border-radius:8px;padding:6px 8px;font-size:9px;font-weight:800}
+.command-results{overflow:auto;padding:8px}
+.command-item{width:100%;display:flex;align-items:center;gap:12px;padding:12px 13px;border:1px solid transparent;border-radius:11px;background:transparent;color:#c6c0b5;text-align:left;font-size:11.5px;font-weight:700;cursor:pointer}
+.command-item:hover,.command-item.active{border-color:rgba(212,175,55,.18);background:rgba(212,175,55,.07);color:#f0e8d8}
+.command-item i{width:30px;height:30px;display:grid;place-items:center;border-radius:9px;border:1px solid rgba(212,175,55,.16);background:#090909;color:var(--gold);font-size:9px;font-style:normal}
+.command-item span{min-width:0}.command-item small{display:block;color:#716b63;font-size:9px;margin-top:3px;font-weight:600}
+.command-empty{padding:28px 18px;text-align:center;color:#777168;font-size:11px}
+
+@media(max-width:1280px){.hero-layout{grid-template-columns:1fr minmax(280px,.52fr)}}
+@media(max-width:1120px){.workspace-bar{top:64px}.hero-layout{grid-template-columns:1fr}.hero-sidepanel{border-left:0;border-top:1px solid rgba(212,175,55,.14)}.hero-sidepanel:before{display:none}}
+@media(max-width:760px){.workspace-bar{top:61px;margin:-4px 0 14px;padding:7px 8px 7px 11px;min-height:52px}.workspace-crumb small{display:none}.workspace-actions .workspace-mini-btn:not(.search-btn){display:none}.workspace-mini-btn{height:36px;padding:8px 10px}.workspace-mini-btn kbd{display:none}.hero-main{padding:25px 19px 23px}.hero-sidepanel{padding:20px 18px}.hero-layout{min-height:0}.hero-sidepanel h3{font-size:18px}.section-head h2{font-size:24px}.command-palette{padding-top:9vh}.command-box{max-height:80vh}}
+
+/* Relatório executivo impresso */
+.report-sheet{display:none}
+.report-header{display:flex;justify-content:space-between;gap:24px;align-items:flex-start;border-bottom:2px solid #b38a2d;padding-bottom:18px;margin-bottom:22px}
+.report-brand{font-family:"Outfit",sans-serif;font-size:20px;font-weight:700;letter-spacing:.08em}.report-brand small{display:block;font-family:"Plus Jakarta Sans",sans-serif;font-size:9px;font-weight:700;color:#8b681e;letter-spacing:.16em;margin-top:5px}
+.report-meta{text-align:right;font-size:10px;color:#555;line-height:1.55}
+.report-sheet h1{font-family:"Outfit",sans-serif;font-size:30px;line-height:1.1;margin:0 0 8px}.report-sheet .report-lead{font-size:12px;color:#555;line-height:1.65;margin:0 0 20px;max-width:95%}
+.report-status-box{padding:17px 18px;border:1px solid #ccb777;border-left:4px solid #b38a2d;border-radius:8px;background:#fbf8ef;margin-bottom:18px}
+.report-status-box b{display:block;font-size:17px;margin-bottom:6px}.report-status-box p{margin:0;color:#444;font-size:11px;line-height:1.6}
+.report-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:18px}.report-kpi{padding:12px;border:1px solid #ddd4bd;border-radius:7px}.report-kpi span{display:block;color:#755b22;font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}.report-kpi b{font-size:16px}
+.report-columns{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:18px}.report-column{padding:13px;border:1px solid #ddd4bd;border-radius:7px}.report-column span{display:block;color:#755b22;font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}.report-column b{display:block;font-size:11px;margin-bottom:5px}.report-column p{font-size:9.5px;color:#444;line-height:1.55;margin:0}
+.report-priorities{padding:14px 16px;border:1px solid #ddd4bd;border-radius:7px}.report-priorities h2{font-size:14px;margin:0 0 9px}.report-priorities ol{margin:0;padding-left:18px}.report-priorities li{font-size:10px;line-height:1.5;margin:5px 0}.report-disclaimer{margin-top:16px;border-top:1px solid #ddd4bd;padding-top:9px;color:#666;font-size:8.5px;line-height:1.5}
+
+@media print{
+  @page{size:A4;margin:14mm}
+  body{background:#fff!important;color:#111!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .app,.mobile-head,.bottom-nav,.toast{display:none!important}
+  .report-sheet{display:block!important;color:#111!important;font-family:"Plus Jakarta Sans",Arial,sans-serif}
+}
+@media(max-width:1280px){.insight-list{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(2,1fr)}.quick-grid{grid-template-columns:repeat(3,1fr)}.routine-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:1120px){
+  .app{grid-template-columns:1fr}.sidebar{display:none}.mobile-head{display:flex;position:sticky;top:0;z-index:90;padding:11px 14px;justify-content:space-between;align-items:center;background:rgba(5,5,5,.94);backdrop-filter:blur(18px);border-bottom:1px solid var(--line)}
+  .mobile-head .brand{padding:0}.mobile-head .brand-mark{width:35px;height:35px}.mobile-head .brand-mark:before{width:29px;height:29px;font-size:9px}.main{padding:20px 20px 92px}
+  .g3{grid-template-columns:repeat(2,1fr)}.bottom-nav{display:grid;grid-template-columns:repeat(5,1fr);position:fixed;left:10px;right:10px;bottom:max(10px,env(safe-area-inset-bottom));z-index:120;background:rgba(8,8,8,.95);backdrop-filter:blur(18px);border:1px solid rgba(212,175,55,.25);border-radius:16px;padding:6px;box-shadow:var(--shadow)}
+  .bottom-nav a{color:#9a958b;text-decoration:none;text-align:center;font-size:8.5px;padding:7px 4px;border-radius:10px;min-height:46px}.bottom-nav a b{display:block;color:var(--gold);font-size:14px;margin-bottom:2px}
+}
+@media(max-width:760px){
+  .main{padding:15px 13px calc(106px + env(safe-area-inset-bottom));overflow:hidden}.topline{align-items:flex-start;flex-direction:column;margin-bottom:12px}.privacy{font-size:9.5px;line-height:1.4}.hero{padding:24px 19px;border-radius:20px}.hero h1{font-size:clamp(32px,10vw,39px);line-height:1.04}.hero p{font-size:13px;line-height:1.72}.section{margin-top:31px}.section-head{align-items:flex-start;flex-direction:column;gap:8px}.section-head h2{font-size:23px}.section-sub{font-size:12.5px;line-height:1.7}
+  .g4,.g3,.g2,.fields.two,.fields.three{grid-template-columns:1fr}.stat{min-height:116px}.stat .value{font-size:27px}.score-wrap{grid-template-columns:1fr}.score-ring{width:116px;height:116px}.insight-list{grid-template-columns:1fr}.donut-wrap{grid-template-columns:1fr}.donut{width:188px;height:188px;margin:auto}.asset-row{grid-template-columns:1fr 1fr}.asset-row .name{grid-column:1/-1}.asset-row .remove{width:100%}.canvas-wrap{height:235px}.hero-actions .btn{flex:1;min-width:145px}.list-row{align-items:flex-start;flex-direction:column}.snapshot{align-items:flex-start;flex-direction:column}.snapshot-actions{width:100%}.snapshot-actions button{flex:1}.field input,.field select{font-size:16px}.info:after{left:0;transform:translate(0,6px)}.info:hover:after,.info:focus:after{transform:none}
+  .tool,.card{padding:17px}.card p,.help,.advisor,.output{font-size:12.5px}.metric-explainer,.notice{font-size:11.8px}.quick-start summary{font-size:14px;line-height:1.45;padding:15px 16px}.quick-start-content{padding:0 15px 16px}.quick-grid{grid-template-columns:1fr}.quick-step{min-height:0}.executive-top,.academy-intro{grid-template-columns:1fr}.executive-main,.executive-side{padding:20px 17px}.executive-side{border-left:0;border-top:1px solid rgba(212,175,55,.14)}.exec-grid,.priority-list{grid-template-columns:1fr}.exec-item{min-height:0;border-right:0;border-bottom:1px solid rgba(212,175,55,.12)}.exec-item:last-child{border-bottom:0}.lesson summary{grid-template-columns:38px minmax(0,1fr) 28px;gap:9px;min-height:78px;padding:12px}.lesson-title b{font-size:14px}.lesson-title small{font-size:10.5px}.lesson-body{padding:4px 15px 18px;font-size:13px;line-height:1.78}.concept-grid,.concept-grid.two,.decision-check,.horizon-grid,.routine-grid,.method-grid,.glossary-grid,.score-method{grid-template-columns:1fr}.knowledge-card p,.horizon p,.glossary-card dd{font-size:11.8px}.protection-summary{grid-template-columns:1fr}.protection-score{font-size:20px}.source-link{width:100%;justify-content:center}.academy-manifesto,.readiness-card{padding:18px}.routine-card{padding:18px 16px}.formula{min-height:0}.field input,.field select{height:48px}.btn{min-height:46px}.info:after{left:auto;right:0;width:min(260px,calc(100vw - 42px));transform:translate(0,6px)}.info:hover:after,.info:focus:after{transform:none}
+}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="mobile-head">
+  <div class="brand"><div class="brand-mark"></div><div><b>RAIO‑X FINANCEIRO</b><small>PRIVATE WEALTH DASHBOARD</small></div></div>
+  <span class="tag green">SESSÃO PRIVADA</span>
+</div>
+<div class="app">
+<aside class="sidebar">
+  <div class="brand"><div class="brand-mark"></div><div><b>RAIO‑X FINANCEIRO</b><small>PRO / WEALTH INTELLIGENCE</small></div></div>
+  <div class="sidebar-tools">
+    <div class="nav-search-wrap">
+      <input class="nav-search" id="navSearch" type="search" autocomplete="off" placeholder="Buscar ferramenta" aria-label="Buscar ferramenta no painel">
+      <span class="nav-shortcut">Ctrl K</span>
+    </div>
+  </div>
+  <nav class="nav" id="mainNav">
+    <div class="nav-group">Visão e diagnóstico</div>
+    <a href="#inicio" class="active" data-group="Visão e diagnóstico"><i>01</i> Visão geral</a>
+    <a href="#comecar" data-group="Visão e diagnóstico"><i>02</i> Como usar</a>
+    <a href="#executivo" data-group="Visão e diagnóstico"><i>03</i> Parecer executivo</a>
+
+    <div class="nav-group">Base financeira</div>
+    <a href="#raiox" data-group="Base financeira"><i>04</i> Fluxo mensal</a>
+    <a href="#patrimonio" data-group="Base financeira"><i>05</i> Patrimônio</a>
+    <a href="#reserva" data-group="Base financeira"><i>06</i> Liquidez & reserva</a>
+    <a href="#metas" data-group="Base financeira"><i>07</i> Metas estratégicas</a>
+    <a href="#dividas" data-group="Base financeira"><i>08</i> Gestão de dívidas</a>
+
+    <div class="nav-group">Decisões e cenários</div>
+    <a href="#cenarios" data-group="Decisões e cenários"><i>09</i> Cenários decisórios</a>
+    <a href="#projecao" data-group="Decisões e cenários"><i>10</i> Projeção patrimonial</a>
+    <a href="#compras" data-group="Decisões e cenários"><i>11</i> Decisões de compra</a>
+    <a href="#independencia" data-group="Decisões e cenários"><i>12</i> Independência</a>
+    <a href="#stress" data-group="Decisões e cenários"><i>13</i> Teste de resiliência</a>
+    <a href="#oportunidade" data-group="Decisões e cenários"><i>14</i> Custo de oportunidade</a>
+
+    <div class="nav-group">Conhecimento e proteção</div>
+    <a href="#academy" data-group="Conhecimento e proteção"><i>15</i> Central de investimentos</a>
+    <a href="#protecao" data-group="Conhecimento e proteção"><i>16</i> Proteção patrimonial</a>
+    <a href="#rotina" data-group="Conhecimento e proteção"><i>17</i> Rotina financeira</a>
+
+    <div class="nav-group">Execução e controle</div>
+    <a href="#plano" data-group="Execução e controle"><i>18</i> Plano de 30 dias</a>
+    <a href="#historico" data-group="Execução e controle"><i>19</i> Evolução patrimonial</a>
+    <a href="#metodologia" data-group="Execução e controle"><i>20</i> Metodologia</a>
+    <a href="#glossario" data-group="Execução e controle"><i>21</i> Glossário & fontes</a>
+  </nav>
+  <div class="side-card">
+    <div class="vault-row"><strong>Base do diagnóstico</strong><span class="vault-badge">Cofre local</span></div>
+    <div class="side-progress" aria-hidden="true"><span id="sideProgressBar"></span></div>
+    <div class="side-progress-meta"><span id="sideProgressText">0% estruturado</span><span>salvo neste dispositivo</span></div>
+  </div>
+</aside>
+
+<main class="main">
+  <div class="workspace-bar" aria-label="Barra do workspace">
+    <div class="workspace-crumb"><span class="home-dot"></span><small>Workspace financeiro</small><b id="currentSectionName">Visão geral</b></div>
+    <div class="workspace-actions">
+      <button class="workspace-mini-btn search-btn" type="button" onclick="openCommandPalette()">Buscar <kbd>Ctrl K</kbd></button>
+      <button class="workspace-mini-btn" type="button" onclick="saveSnapshot()">Salvar posição</button>
+      <button class="workspace-mini-btn primary" type="button" onclick="printReport()">Relatório PDF</button>
+    </div>
+  </div>
+
+  <section class="hero" id="inicio">
+    <div class="hero-layout">
+      <div class="hero-main">
+        <div class="kicker">Diagnóstico patrimonial · sessão privada</div>
+        <h1>Clareza financeira para decisões de patrimônio.</h1>
+        <p>Consolide fluxo de caixa, liquidez, dívidas, metas e projeções em uma visão estratégica. O painel interpreta seus números, revela vulnerabilidades e organiza prioridades executáveis — sem enviar informações para servidores.</p>
+        <div class="hero-actions">
+          <a class="btn primary" href="#raiox">Iniciar diagnóstico</a>
+          <a class="btn" href="#academy">Aprender a investir</a>
+          <button class="btn cyan" onclick="loadDemo()">Carregar demonstração</button>
+          <button class="btn ghost" onclick="exportData()">Exportar backup</button>
+        </div>
+      </div>
+      <aside class="hero-sidepanel" aria-label="Progresso do diagnóstico">
+        <div>
+          <div class="hero-side-label">Próximo melhor passo</div>
+          <h3 id="workspaceNextTitle">Construa sua linha de base</h3>
+          <p id="workspaceNextText">Comece pelo fluxo mensal para liberar uma leitura financeira personalizada.</p>
+        </div>
+        <div>
+          <div class="hero-progress-head"><span>Base do diagnóstico</span><b id="workspaceProgressText">0%</b></div>
+          <div class="hero-progress"><span id="workspaceProgressBar"></span></div>
+          <a class="hero-side-link" id="workspaceNextLink" href="#raiox"><span>Continuar diagnóstico</span><span>→</span></a>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="section" id="comecar">
+    <details class="tool quick-start" open>
+      <summary><span><span class="kicker">Comece por aqui</span><br>Seu diagnóstico completo em cinco movimentos</span></summary>
+      <div class="quick-start-content">
+        <div class="quick-grid">
+          <div class="quick-step"><span class="step-num">01</span><b>Reúna dados reais</b><p>Abra extratos, faturas, contratos e saldos. Números aproximados geram decisões aproximadas.</p></div>
+          <div class="quick-step"><span class="step-num">02</span><b>Mapeie o mês</b><p>Informe renda, essenciais, variáveis, parcelas e aportes para revelar a margem verdadeira.</p></div>
+          <div class="quick-step"><span class="step-num">03</span><b>Consolide o patrimônio</b><p>Cadastre ativos, liquidez e passivos. O painel separa posse de riqueza líquida.</p></div>
+          <div class="quick-step"><span class="step-num">04</span><b>Leia o parecer</b><p>Use o diagnóstico executivo para identificar força, vulnerabilidade e próxima decisão.</p></div>
+          <div class="quick-step"><span class="step-num">05</span><b>Execute e compare</b><p>Conclua o plano de 30 dias e registre posições periódicas para medir evolução.</p></div>
+        </div>
+        <div class="quick-note">Você não precisa preencher tudo de uma vez. Fluxo, patrimônio e reserva já produzem a primeira leitura; as demais ferramentas aprofundam decisões específicas.</div>
+      </div>
+    </details>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <div><div class="kicker">Resumo executivo</div><h2>Os quatro sinais centrais da sua estrutura</h2></div>
+      <div class="section-sub">Uma leitura consolidada de caixa, formação de patrimônio, posição líquida e capacidade de atravessar imprevistos.</div>
+    </div>
+    <div class="grid g4">
+      <div class="card stat"><div class="label">Saldo estratégico <span class="info" role="note" tabindex="0" aria-label="Explicação sobre saldo estratégico" data-tip="É a diferença entre renda e despesas de consumo, antes de descontar os aportes. Mostra a margem mensal disponível para proteger ou expandir seu patrimônio.">i</span></div><div class="value blue" id="kpiBalance">R$ 0</div><div class="note" id="kpiBalanceNote">Insira renda e despesas para iniciar a leitura.</div></div>
+      <div class="card stat"><div class="label">Taxa de formação patrimonial <span class="info" role="note" tabindex="0" aria-label="Explicação sobre taxa de formação patrimonial" data-tip="Percentual da renda que permanece livre após despesas essenciais, variáveis e parcelas. Quanto maior e mais sustentável, maior sua capacidade de construir patrimônio.">i</span></div><div class="value good" id="kpiSaveRate">0%</div><div class="note">Margem potencial da renda após despesas e parcelas.</div></div>
+      <div class="card stat"><div class="label">Patrimônio líquido <span class="info" role="note" tabindex="0" aria-label="Explicação sobre patrimônio líquido" data-tip="Soma dos ativos menos dívidas e obrigações. É a medida mais direta da riqueza efetivamente acumulada, independentemente da renda mensal.">i</span></div><div class="value blue" id="kpiNetWorth">R$ 0</div><div class="note">O que efetivamente permanece após descontar passivos.</div></div>
+      <div class="card stat"><div class="label">Runway de liquidez <span class="info" role="note" tabindex="0" aria-label="Explicação sobre runway de liquidez" data-tip="Quantidade de meses de gastos essenciais cobertos pelos ativos marcados como líquidos. Mede quanto tempo você consegue preservar decisões sem depender de nova renda.">i</span></div><div class="value good" id="kpiRunway">0 meses</div><div class="note">Meses de despesas essenciais cobertos pelo caixa e ativos líquidos.</div></div>
+    </div>
+  </section>
+
+  <section class="section" id="executivo">
+    <div class="section-head">
+      <div><div class="kicker">03 / Parecer executivo</div><h2>O que seus números estão dizendo agora</h2></div>
+      <div class="section-sub">Uma leitura automática da estrutura informada — sem promessas, sem produto financeiro, sem recomendação de ativo.</div>
+    </div>
+    <div class="tool executive-panel">
+      <div class="executive-top">
+        <div class="executive-main">
+          <div class="executive-status"><span class="status-dot" id="execStatusDot"></span><span class="tag amber" id="execStatusTag">Aguardando base</span></div>
+          <h3 id="execHeadline">Seu painel ainda precisa de uma linha de base.</h3>
+          <p id="execSummary">Preencha fluxo, patrimônio e liquidez para transformar este espaço em um parecer financeiro personalizado.</p>
+        </div>
+        <div class="executive-side"><div class="label">Indicador central agora</div><b id="execMetricTitle">Construção da base</b><p id="execMetricText">Comece com os números reais do mês e a posição patrimonial atual.</p></div>
+      </div>
+      <div class="exec-grid">
+        <div class="exec-item"><span class="eyebrow">Pilar mais forte</span><b id="execStrengthTitle">Ainda não identificado</b><p id="execStrengthText">O painel precisa de dados para comparar os pilares.</p></div>
+        <div class="exec-item"><span class="eyebrow">Ponto de atenção</span><b id="execAttentionTitle">Ainda não identificado</b><p id="execAttentionText">Vulnerabilidades aparecerão aqui conforme o diagnóstico for preenchido.</p></div>
+        <div class="exec-item"><span class="eyebrow">Próximo movimento</span><b id="execNextTitle">Construir a linha de base</b><p id="execNextText">Mapeie renda, gastos, ativos, passivos e liquidez antes de aprofundar decisões.</p></div>
+      </div>
+      <div class="priority-strip"><span>Ordem estratégica sugerida</span><ol class="priority-list" id="execPriorities"><li>Validar o fluxo mensal.</li><li>Consolidar ativos e passivos.</li><li>Separar liquidez de patrimônio total.</li></ol></div>
+    </div>
+  </section>
+
+  <section class="section" id="raiox">
+    <div class="section-head">
+      <div><div class="kicker">04 / Fluxo mensal</div><h2>Para onde sua renda realmente está indo?</h2></div>
+      <div class="section-sub">O diagnóstico parte do fluxo: renda menos consumo e obrigações. Aportes aparecem separados para não serem confundidos com despesas.</div>
+    </div>
+    <div class="grid g2">
+      <div class="tool">
+        <div class="fields two">
+          <div class="field"><label>Renda líquida mensal <span class="info" tabindex="0" data-tip="Use o valor que efetivamente entra na sua conta depois de descontos obrigatórios.">i</span></label><input id="income" inputmode="decimal" placeholder="0,00"/></div>
+          <div class="field"><label>Despesas essenciais <span class="info" tabindex="0" data-tip="Moradia, alimentação básica, saúde, transporte necessário e outras despesas indispensáveis.">i</span></label><input id="essential" inputmode="decimal" placeholder="0,00"/></div>
+          <div class="field"><label>Despesas variáveis</label><input id="variable" inputmode="decimal" placeholder="0,00"/></div>
+          <div class="field"><label>Parcelas e obrigações</label><input id="installments" inputmode="decimal" placeholder="0,00"/></div>
+          <div class="field"><label>Aporte mensal planejado <span class="info" tabindex="0" data-tip="Valor que você pretende direcionar para reserva, investimentos ou amortizações. Não entra como despesa de consumo.">i</span></label><input id="contribution" inputmode="decimal" placeholder="0,00"/></div>
+          <div class="field"><label>Inflação anual de referência</label><input id="inflation" inputmode="decimal" value="4,5"/></div>
+        </div>
+        <p class="form-note" style="margin-top:11px">Se sua renda oscila, prefira uma média conservadora de 6 a 12 meses. Não inclua limites de cartão como renda.</p>
+      </div>
+      <div class="tool">
+        <h3>Leitura do mês</h3>
+        <div class="output" id="cashFlowOutput">Informe sua renda e despesas. O painel mostrará a margem mensal, o peso de cada grupo e se o aporte planejado cabe no caixa.</div>
+        <div class="advisor" id="cashFlowAdvice"><strong>Parecer do painel</strong><br>Uma boa decisão começa distinguindo gasto de consumo, obrigação contratual e formação de patrimônio.</div>
+        <div class="metric-explainer"><b>Como ler:</b> “saldo estratégico” é renda menos essenciais, variáveis e parcelas. “Caixa pós-aporte” desconta também o aporte planejado. Se o segundo ficar negativo, o plano de aporte é maior do que o caixa comporta.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="patrimonio">
+    <div class="section-head">
+      <div><div class="kicker">05 / Balanço patrimonial</div><h2>Consolide tudo o que você possui — e o que deve.</h2></div>
+      <div class="section-sub">Cadastre ativos por classe e marque o que realmente pode ser convertido em caixa rapidamente. Isso alimenta patrimônio, liquidez, reserva, stress test e parecer executivo.</div>
+    </div>
+    <div class="grid g2">
+      <div class="tool">
+        <div id="assets"></div>
+        <button class="btn" onclick="addAsset()">+ Adicionar ativo</button>
+        <div class="fields two" style="margin-top:15px">
+          <div class="field"><label>Dívidas / passivos totais</label><input id="liabilities" inputmode="decimal" placeholder="0,00"/></div>
+          <div class="field"><label>Patrimônio no início da medição <span class="info" tabindex="0" data-tip="Opcional. Use o patrimônio líquido de um ponto anterior para comparar evolução no histórico.">i</span></label><input id="initialNW" inputmode="decimal" placeholder="Opcional"/></div>
+        </div>
+      </div>
+      <div class="tool">
+        <h3>Alocação declarada</h3>
+        <div class="donut-wrap">
+          <div class="donut" id="allocationDonut"></div>
+          <div class="legend" id="allocationLegend"></div>
+        </div>
+        <div class="advisor" id="assetAdvice"><strong>Leitura patrimonial</strong><br>Patrimônio elevado não significa liquidez elevada. O painel trata as duas dimensões separadamente.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="reserva">
+    <div class="section-head">
+      <div><div class="kicker">06 / Liquidez e reserva</div><h2>Quanto tempo você consegue proteger suas decisões?</h2></div>
+      <div class="section-sub">Reserva é uma camada de proteção, não uma meta universal. O horizonte depende de estabilidade de renda, dependentes, saúde, patrimônio e riscos pessoais.</div>
+    </div>
+    <div class="grid g2">
+      <div class="tool">
+        <div class="fields two">
+          <div class="field"><label>Meta de cobertura em meses <span class="info" tabindex="0" data-tip="Escolha uma hipótese coerente com sua realidade. O painel não define um número obrigatório.">i</span></label><input id="reserveMonths" type="number" min="1" max="36" value="6"/></div>
+          <div class="field"><label>Despesas anuais previsíveis</label><input id="annualExpenses" inputmode="decimal" placeholder="IPVA, seguros, anuidades..."/></div>
+        </div>
+        <div class="output" id="reserveOutput" style="margin-top:12px">Informe despesas essenciais e ativos líquidos para calcular cobertura.</div>
+        <div class="progress" style="margin-top:12px"><span id="reserveBar" style="width:0"></span></div>
+      </div>
+      <div class="tool">
+        <h3>Reserva ≠ despesas previsíveis</h3>
+        <p class="help">Uma despesa anual conhecida não é emergência. Ao separar esses dois blocos, você reduz o risco de desmontar a reserva por algo que já poderia estar provisionado.</p>
+        <div class="advisor" id="reserveAdvice"><strong>Próxima decisão</strong><br>Construa primeiro uma referência realista de despesas essenciais e liquidez.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="metas">
+    <div class="section-head">
+      <div><div class="kicker">07 / Metas estratégicas</div><h2>Transforme objetivo em prazo e necessidade de capital.</h2></div>
+      <div class="section-sub">A calculadora usa valor inicial, aporte e uma hipótese de retorno constante. É uma projeção matemática, não promessa de desempenho.</div>
+    </div>
+    <div class="grid g2">
+      <div class="tool">
+        <div class="fields two">
+          <div class="field"><label>Nome da meta</label><input id="goalName" placeholder="Ex.: entrada de imóvel"/></div>
+          <div class="field"><label>Valor-alvo</label><input id="goalTarget" inputmode="decimal" placeholder="0,00"/></div>
+          <div class="field"><label>Capital já reservado</label><input id="goalCurrent" inputmode="decimal" placeholder="0,00"/></div>
+          <div class="field"><label>Prazo em meses</label><input id="goalMonths" type="number" min="1" max="600" placeholder="60"/></div>
+          <div class="field"><label>Retorno anual hipotético</label><input id="goalReturn" inputmode="decimal" value="8"/></div>
+          <div class="field"><label>Aporte mensal possível</label><input id="goalContribution" inputmode="decimal" placeholder="0,00"/></div>
+        </div>
+      </div>
+      <div class="tool"><div class="output" id="goalOutput">Defina valor, prazo e capital atual para estimar o aporte mensal necessário.</div><div class="advisor" id="goalAdvice"><strong>Decisão</strong><br>Metas de curto prazo normalmente pedem prioridade maior para previsibilidade e liquidez do que para busca de retorno.</div></div>
+    </div>
+  </section>
+
+  <section class="section" id="dividas">
+    <div class="section-head">
+      <div><div class="kicker">08 / Gestão de dívidas</div><h2>Compare o custo da dívida com o uso alternativo do capital.</h2></div>
+      <div class="section-sub">Não basta perguntar “quitar ou investir?”. Primeiro identifique taxa, prazo, liquidez, reserva e custo efetivo do contrato.</div>
+    </div>
+    <div class="grid g2">
+      <div class="tool"><div class="fields two">
+        <div class="field"><label>Saldo da dívida</label><input id="debtBalance" inputmode="decimal" placeholder="0,00"/></div>
+        <div class="field"><label>Taxa mensal da dívida (%)</label><input id="debtRate" inputmode="decimal" placeholder="Ex.: 1,5"/></div>
+        <div class="field"><label>Parcela atual</label><input id="debtPayment" inputmode="decimal" placeholder="0,00"/></div>
+        <div class="field"><label>Valor extra disponível</label><input id="debtExtra" inputmode="decimal" placeholder="0,00"/></div>
+        <div class="field"><label>Retorno anual alternativo (%)</label><input id="alternativeReturn" inputmode="decimal" value="8"/></div>
+      </div></div>
+      <div class="tool"><div class="output" id="debtOutput">Informe saldo e taxa para comparar o custo financeiro com uma alternativa hipotética.</div><div class="advisor" id="debtAdvice"><strong>Parecer</strong><br>Taxas de dívida e retornos de investimento não são equivalentes em risco, tributação e previsibilidade.</div></div>
+    </div>
+  </section>
+
+  <section class="section" id="cenarios">
+    <div class="section-head">
+      <div><div class="kicker">09 / Cenários decisórios</div><h2>Veja o impacto antes de mudar seu padrão de vida.</h2></div>
+      <div class="section-sub">Compare um cenário-base com mudanças de renda, custo fixo e aporte. Ideal para decisões de carreira, moradia ou redução de despesas.</div>
+    </div>
+    <div class="grid g2">
+      <div class="tool"><div class="fields three">
+        <div class="field"><label>Δ renda mensal</label><input id="scIncome" inputmode="decimal" placeholder="+ / -"/></div>
+        <div class="field"><label>Δ despesas mensais</label><input id="scExpenses" inputmode="decimal" placeholder="+ / -"/></div>
+        <div class="field"><label>Δ aporte mensal</label><input id="scContribution" inputmode="decimal" placeholder="+ / -"/></div>
+      </div><p class="form-note" style="margin-top:11px">Use números positivos para aumentar e negativos para reduzir. Ex.: cortar R$ 800 de despesas = -800.</p></div>
+      <div class="tool"><div class="output" id="scenarioOutput">O comparador mostrará a nova margem e o efeito anual aproximado sobre a capacidade de formar patrimônio.</div><div class="advisor" id="scenarioAdvice"><strong>Cenário</strong><br>Uma mudança pequena e recorrente pode ter impacto maior do que uma otimização pontual.</div></div>
+    </div>
+  </section>
+
+  <section class="section" id="projecao">
+    <div class="section-head">
+      <div><div class="kicker">10 / Projeção patrimonial</div><h2>Modele crescimento sem confundir hipótese com promessa.</h2></div>
+      <div class="section-sub">A curva usa patrimônio investível atual, aporte mensal e retorno anual constante. O resultado real pode ser significativamente diferente.</div>
+    </div>
+    <div class="grid g2">
+      <div class="tool"><div class="fields two">
+        <div class="field"><label>Capital inicial da projeção</label><input id="projInitial" inputmode="decimal" placeholder="0,00"/></div>
+        <div class="field"><label>Aporte mensal</label><input id="projMonthly" inputmode="decimal" placeholder="0,00"/></div>
+        <div class="field"><label>Retorno anual hipotético (%)</label><input id="projReturn" inputmode="decimal" value="8"/></div>
+        <div class="field"><label>Horizonte (anos)</label><input id="projYears" type="number" min="1" max="50" value="10"/></div>
+      </div><div class="output" id="projectionOutput" style="margin-top:12px">Configure as premissas para projetar a trajetória.</div></div>
+      <div class="tool"><div class="canvas-wrap"><canvas id="projectionChart"></canvas></div><div class="metric-explainer"><b>Importante:</b> a curva não modela volatilidade, impostos, taxas, mudanças de aporte, inflação futura nem sequência de retornos.</div></div>
+    </div>
+  </section>
+
+  <section class="section" id="compras">
+    <div class="section-head">
+      <div><div class="kicker">11 / Decisões de compra</div><h2>Quanto uma compra realmente compete com seu patrimônio?</h2></div>
+      <div class="section-sub">Compare preço à vista, parcelamento e o custo de oportunidade de utilizar capital hoje.</div>
+    </div>
+    <div class="grid g2">
+      <div class="tool"><div class="fields two">
+        <div class="field"><label>Preço à vista</label><input id="purchaseCash" inputmode="decimal" placeholder="0,00"/></div>
+        <div class="field"><label>Entrada</label><input id="purchaseDown" inputmode="decimal" placeholder="0,00"/></div>
+        <div class="field"><label>Número de parcelas</label><input id="purchaseInstallments" type="number" min="1" max="360" placeholder="12"/></div>
+        <div class="field"><label>Valor da parcela</label><input id="purchasePayment" inputmode="decimal" placeholder="0,00"/></div>
+        <div class="field"><label>Retorno anual alternativo (%)</label><input id="purchaseReturn" inputmode="decimal" value="8"/></div>
+      </div></div>
+      <div class="tool"><div class="output" id="purchaseOutput">Informe as condições para comparar custo nominal e uso alternativo do capital.</div><div class="advisor" id="purchaseAdvice"><strong>Decisão</strong><br>Uma compra pode caber na renda e ainda assim reduzir flexibilidade financeira ou atrasar uma meta.</div></div>
+    </div>
+  </section>
+
+  <section class="section" id="independencia">
+    <div class="section-head"><div><div class="kicker">12 / Independência financeira</div><h2>Estime capital necessário com premissas explícitas.</h2></div><div class="section-sub">A taxa de retirada é apenas uma hipótese educacional. Sustentabilidade depende de retorno, inflação, horizonte, impostos, custos e sequência de mercado.</div></div>
+    <div class="grid g2">
+      <div class="tool"><div class="fields two">
+        <div class="field"><label>Custo de vida mensal desejado</label><input id="fiMonthly" inputmode="decimal" placeholder="0,00"/></div>
+        <div class="field"><label>Taxa de retirada anual (%)</label><input id="withdrawalRate" inputmode="decimal" value="4"/></div>
+      </div></div>
+      <div class="tool"><div class="output" id="fiOutput">Defina o custo anual e uma taxa de retirada hipotética para estimar capital de referência.</div><div class="advisor" id="fiAdvice"><strong>Leitura</strong><br>Use este número como ordem de grandeza, não como garantia de aposentadoria ou renda vitalícia.</div></div>
+    </div>
+  </section>
+
+  <section class="section" id="stress">
+    <div class="section-head"><div><div class="kicker">13 / Teste de resiliência</div><h2>Simule pressão antes que ela aconteça.</h2></div><div class="section-sub">Veja como perda de renda, aumento de despesas e queda de ativos líquidos afetam sua capacidade de atravessar um período difícil.</div></div>
+    <div class="grid g2">
+      <div class="tool"><div class="fields three">
+        <div class="field"><label>Queda da renda (%)</label><input id="stressIncomeDrop" inputmode="decimal" value="30"/></div>
+        <div class="field"><label>Aumento essenciais (%)</label><input id="stressExpenseRise" inputmode="decimal" value="10"/></div>
+        <div class="field"><label>Queda da liquidez (%)</label><input id="stressLiquidityDrop" inputmode="decimal" value="10"/></div>
+      </div></div>
+      <div class="tool"><div class="output" id="stressOutput">Preencha a base financeira para executar o stress test.</div><div class="advisor" id="stressAdvice"><strong>Resiliência</strong><br>O objetivo do teste não é prever uma crise, e sim revelar quais dependências precisam de plano B.</div></div>
+    </div>
+  </section>
+
+  <section class="section" id="oportunidade">
+    <div class="section-head"><div><div class="kicker">14 / Custo de oportunidade</div><h2>Quanto vale a alternativa que você está deixando para trás?</h2></div><div class="section-sub">Projete o valor futuro de uma quantia que seria consumida hoje. A taxa é uma hipótese e deve ser compatível com risco e horizonte.</div></div>
+    <div class="grid g2">
+      <div class="tool"><div class="fields three">
+        <div class="field"><label>Capital da decisão</label><input id="oppCapital" inputmode="decimal" placeholder="0,00"/></div>
+        <div class="field"><label>Retorno anual hipotético (%)</label><input id="oppReturn" inputmode="decimal" value="8"/></div>
+        <div class="field"><label>Horizonte (anos)</label><input id="oppYears" type="number" min="1" max="50" value="10"/></div>
+      </div></div>
+      <div class="tool"><div class="output" id="oppOutput">Informe um capital para estimar seu valor futuro hipotético.</div><div class="advisor" id="oppAdvice"><strong>Trade-off</strong><br>Custo de oportunidade não significa que você nunca deva gastar; significa enxergar o que a decisão substitui.</div></div>
+    </div>
+  </section>
+
+  <section class="section" id="academy">
+    <div class="section-head"><div><div class="kicker">15 / Central de investimentos</div><h2>Aprenda a decidir antes de aprender a escolher ativos.</h2></div><div class="section-sub">Uma trilha completa para entender liquidez, risco, renda fixa, renda variável, diversificação, avaliação de produtos e proteção contra decisões ruins.</div></div>
+    <div class="academy-intro">
+      <div class="card academy-manifesto"><span class="tag">EDUCAÇÃO · NÃO RECOMENDAÇÃO</span><h3>O melhor investimento começa antes do produto.</h3><p>Investir não é procurar “o ativo que mais rende”. É definir objetivo, prazo, necessidade de liquidez, capacidade de suportar perdas e critérios de decisão. Esta central ensina o processo — e aponta fontes oficiais para você validar regras atuais.</p></div>
+      <div class="card readiness-card"><div class="kicker">Prontidão para investir</div><h3 id="readinessTitle">Estruture a base primeiro</h3><p id="readinessText">Preencha o diagnóstico para avaliar se liquidez, caixa e dívidas pedem atenção antes de ampliar risco.</p><ul class="readiness-steps" id="readinessSteps"></ul></div>
+    </div>
+    <div class="lesson-stack">
+      <details class="lesson" open><summary><span class="lesson-index">01</span><span class="lesson-title"><b>Antes de investir: objetivo, prazo, liquidez e risco</b><small>O mapa mental que evita comparar produtos incompatíveis.</small></span></summary><div class="lesson-body">
+        <p>Uma decisão de investimento é a combinação de <strong>objetivo + horizonte + liquidez + risco + custo + tributação</strong>. O produto vem depois. Dinheiro que pode ser necessário em poucos meses não deveria ser analisado com a mesma lógica de capital destinado a décadas.</p>
+        <div class="concept-grid"><div class="knowledge-card"><b>Objetivo</b><p>Para que o dinheiro existe? Emergência, compra, aposentadoria e crescimento patrimonial têm necessidades diferentes.</p></div><div class="knowledge-card"><b>Horizonte</b><p>Quando o dinheiro poderá ser necessário? Quanto menor o prazo, menor a tolerância a oscilações difíceis de recuperar.</p></div><div class="knowledge-card"><b>Liquidez</b><p>Em quanto tempo e com que incerteza o ativo pode virar dinheiro utilizável?</p></div></div>
+        <div class="premium-callout"><strong>Regra de processo:</strong> não escolha pelo maior retorno exibido. Primeiro elimine alternativas incompatíveis com prazo e liquidez; depois compare risco, custos, impostos e qualidade do emissor ou veículo.</div>
+      </div></details>
+
+      <details class="lesson"><summary><span class="lesson-index">02</span><span class="lesson-title"><b>Reserva e caixa: o investimento que compra liberdade de decisão</b><small>Por que proteção vem antes da busca por retorno.</small></span></summary><div class="lesson-body">
+        <p>Reserva financeira existe para impedir que um imprevisto force uma venda ruim, nova dívida cara ou interrupção de um plano. O tamanho adequado não é universal: estabilidade profissional, dependentes, saúde, seguros e volatilidade da renda alteram a necessidade.</p>
+        <div class="horizon-grid"><div class="horizon"><span>Camada 1</span><b>Caixa operacional</b><p>Dinheiro das despesas correntes e compromissos próximos.</p></div><div class="horizon"><span>Camada 2</span><b>Despesas previsíveis</b><p>IPVA, seguros, anuidades, manutenções e outros eventos já conhecidos.</p></div><div class="horizon"><span>Camada 3</span><b>Reserva de contingência</b><p>Capital para eventos inesperados com prioridade em segurança e acesso.</p></div></div>
+        <p>Evite misturar essas camadas. Se todo caixa é chamado de “reserva”, você perde visibilidade sobre o que realmente está disponível para uma emergência.</p>
+      </div></details>
+
+      <details class="lesson"><summary><span class="lesson-index">03</span><span class="lesson-title"><b>Renda fixa sem confusão: emissor, índice, prazo e marcação</b><small>O que observar antes de comparar taxas.</small></span></summary><div class="lesson-body">
+        <p>Renda fixa significa que as regras de remuneração são definidas na contratação — não que o preço nunca oscile ou que todo produto seja garantido. Para analisar, separe quatro peças:</p>
+        <ol class="decision-check"><li><strong>Emissor:</strong> quem deve o dinheiro e qual risco de crédito você assume?</li><li><strong>Remuneração:</strong> prefixada, pós-fixada ou híbrida? A taxa faz sentido para o prazo?</li><li><strong>Liquidez e vencimento:</strong> você pode sair antes? Há perda, carência ou preço de mercado?</li><li><strong>Proteção e custos:</strong> há cobertura aplicável, limites, imposto ou taxa relevante?</li></ol>
+        <p>Títulos negociáveis podem sofrer <strong>marcação a mercado</strong>: se vendidos antes do vencimento, seu preço pode estar acima ou abaixo do valor esperado originalmente. No Tesouro Direto, por exemplo, o preço de venda antecipada depende das condições do mercado no momento.</p>
+        <div class="premium-callout"><strong>Sobre o FGC:</strong> não trate “tem FGC” como selo de ausência de risco. A cobertura possui produtos elegíveis, limites, condições e regras. Consulte sempre a página oficial antes de contratar.</div>
+        <div class="source-links"><a class="source-link" href="https://www.tesourodireto.com.br/produtos/nossos-produtos" target="_blank" rel="noopener noreferrer">Tesouro Direto · produtos ↗</a><a class="source-link" href="https://www.fgc.org.br/sobre-garantia-fgc" target="_blank" rel="noopener noreferrer">FGC · regras de garantia ↗</a></div>
+      </div></details>
+
+      <details class="lesson"><summary><span class="lesson-index">04</span><span class="lesson-title"><b>Renda variável: retorno sem promessa e risco sem caricatura</b><small>Ações, ETFs e fundos imobiliários exigem processo, não previsão.</small></span></summary><div class="lesson-body">
+        <p>Ativos de renda variável não oferecem uma remuneração contratada. Preços respondem a lucros, expectativas, juros, risco, liquidez e comportamento do mercado. Isso permite crescimento, mas também perdas relevantes — inclusive em horizontes longos.</p>
+        <div class="concept-grid"><div class="knowledge-card"><b>Ações</b><p>Participação em empresas. Analise negócio, geração de caixa, dívida, governança, preço e sua capacidade de manter a tese sob volatilidade.</p></div><div class="knowledge-card"><b>ETFs</b><p>Veículos negociados em bolsa que seguem estratégias ou índices. Entenda o índice, metodologia, custos, liquidez e exposições.</p></div><div class="knowledge-card"><b>FIIs</b><p>Fundos com riscos de mercado, vacância, crédito, gestão e juros. Distribuição passada não garante distribuição futura.</p></div></div>
+        <p>“Longo prazo” não transforma todo ativo em bom investimento. Prazo ajuda a suportar ciclos, mas não corrige automaticamente qualidade ruim, preço excessivo ou concentração.</p>
+      </div></details>
+
+      <details class="lesson"><summary><span class="lesson-index">05</span><span class="lesson-title"><b>Diversificação e alocação: organize riscos, não uma coleção de ativos</b><small>Ter muitos produtos não significa estar diversificado.</small></span></summary><div class="lesson-body">
+        <p>Diversificar é reduzir dependência de uma única fonte de risco. Dez ativos expostos ao mesmo setor, fator econômico ou emissor podem continuar formando uma carteira concentrada.</p>
+        <ul><li>Observe classes de ativos, emissores, setores, indexadores, moedas e geografias.</li><li>Defina uma função para cada bloco: liquidez, estabilidade, renda, crescimento ou diversificação.</li><li>Rebalanceamento serve para voltar a uma estrutura deliberada — não para reagir a toda oscilação.</li><li>Complexidade tem custo. Se você não consegue explicar por que um produto está na carteira, talvez ele não tenha uma função clara.</li></ul>
+        <div class="premium-callout"><strong>Carteira não é ranking.</strong> O peso adequado de uma classe depende de objetivos, horizonte, situação patrimonial e tolerância/capacidade de risco. Este painel não define percentuais de alocação.</div>
+      </div></details>
+
+      <details class="lesson"><summary><span class="lesson-index">06</span><span class="lesson-title"><b>Checklist profissional: como avaliar qualquer investimento</b><small>Uma due diligence prática antes de clicar em “investir”.</small></span></summary><div class="lesson-body">
+        <p>Use estas perguntas como um filtro. Se uma resposta importante não estiver clara, ainda existe trabalho de análise.</p>
+        <ol class="decision-check"><li>Eu consigo explicar, em duas frases, como o produto gera retorno e onde posso perder dinheiro?</li><li>O prazo e a liquidez são compatíveis com a data em que posso precisar do capital?</li><li>Quem é emissor, gestor, administrador ou contraparte? Quais riscos dependem deles?</li><li>Qual é o pior cenário plausível para preço, crédito, liquidez ou renda?</li><li>Quais taxas, spreads, impostos ou penalidades reduzem o retorno líquido?</li><li>Existe concentração escondida em empresa, setor, indexador, geografia ou moeda?</li><li>A comparação foi feita com produtos de risco e prazo semelhantes?</li><li>A informação veio de documento oficial ou apenas de marketing, influencer ou rentabilidade passada?</li></ol>
+        <div class="source-links"><a class="source-link" href="https://www.gov.br/investidor/pt-br/investir/antes-de-investir/entenda-as-caracteristicas-dos-investimentos" target="_blank" rel="noopener noreferrer">Portal do Investidor · características ↗</a></div>
+      </div></details>
+
+      <details class="lesson"><summary><span class="lesson-index">07</span><span class="lesson-title"><b>Erros comportamentais: quando o maior risco é a decisão</b><small>FOMO, excesso de confiança e performance passada.</small></span></summary><div class="lesson-body">
+        <div class="concept-grid two"><div class="knowledge-card"><b>Recência</b><p>Assumir que o ativo que subiu recentemente continuará sendo o melhor. Desempenho passado não garante retorno futuro.</p></div><div class="knowledge-card"><b>FOMO</b><p>Comprar por medo de “ficar de fora”, sem processo de avaliação ou plano de saída.</p></div><div class="knowledge-card"><b>Excesso de confiança</b><p>Aumentar risco após acertos e atribuir resultado apenas à habilidade, ignorando contexto e acaso.</p></div><div class="knowledge-card"><b>Aversão à perda</b><p>Manter uma tese quebrada apenas para evitar realizar prejuízo, ou abandonar uma estratégia sólida diante de volatilidade esperada.</p></div></div>
+        <p>Uma política pessoal simples ajuda: registre por que entrou, horizonte, riscos aceitos e condição que invalidaria a tese. Isso cria uma referência quando o mercado tentar mudar sua memória.</p>
+      </div></details>
+
+      <details class="lesson"><summary><span class="lesson-index">08</span><span class="lesson-title"><b>Golpes e promessas: sinais de alerta antes do dinheiro sair</b><small>Proteção financeira também é parte do retorno.</small></span></summary><div class="lesson-body">
+        <ul><li>Desconfie de promessa de retorno alto, estável e com risco “zero”.</li><li>Não entregue senha, token, código de autenticação ou acesso remoto ao dispositivo.</li><li>Confira instituição, domínio, CNPJ e canais oficiais por conta própria — não pelo link enviado em uma abordagem.</li><li>Pressão de urgência, exclusividade e “oportunidade secreta” reduz seu tempo de verificação: esse é justamente o objetivo de muitos golpes.</li><li>Antes de transferir, valide destinatário e finalidade. Em valores relevantes, uma segunda checagem independente vale minutos.</li></ul>
+        <div class="source-links"><a class="source-link" href="https://www.bcb.gov.br/meubc/faqs/p/golpes" target="_blank" rel="noopener noreferrer">Banco Central · orientações sobre golpes ↗</a></div>
+      </div></details>
+
+      <details class="lesson"><summary><span class="lesson-index">09</span><span class="lesson-title"><b>Governança da carteira: custos, impostos e revisão</b><small>O trabalho continua depois da compra.</small></span></summary><div class="lesson-body">
+        <p>Retorno bruto não é retorno utilizável. Custos explícitos e implícitos, impostos, spreads, giro excessivo e decisões emocionais afetam o resultado líquido. Regras tributárias também mudam; valide a legislação aplicável no momento da decisão.</p>
+        <div class="horizon-grid"><div class="horizon"><span>Mensal</span><b>Aportes e caixa</b><p>Verifique se os aportes cabem no fluxo e se não estão consumindo reserva operacional.</p></div><div class="horizon"><span>Trimestral</span><b>Exposição</b><p>Revise concentração, liquidez e mudanças relevantes nas teses.</p></div><div class="horizon"><span>Anual</span><b>Estratégia</b><p>Reavalie metas, horizonte, risco, custos e documentação — não apenas rentabilidade.</p></div></div>
+        <p>Evite transformar revisão em giro. Uma alteração deveria responder a uma mudança real de objetivo, risco, preço/tese ou estrutura — não apenas ao desejo de “fazer alguma coisa”.</p>
+      </div></details>
+    </div>
+  </section>
+
+  <section class="section" id="protecao">
+    <div class="section-head"><div><div class="kicker">16 / Proteção patrimonial</div><h2>Patrimônio protegido exige mais do que investimentos.</h2></div><div class="section-sub">Um protocolo para revisar continuidade de renda, contingência, seguros, dependentes, documentos e segurança digital.</div></div>
+    <div class="tool">
+      <div class="protection-summary"><div><b id="protectionTitle">Protocolo não iniciado</b><p id="protectionText">Marque os itens já revisados. O objetivo é reduzir pontos únicos de falha.</p></div><div class="protection-score" id="protectionScore">0 / 6</div></div>
+      <div class="checklist" id="protectionChecklist">
+        <label class="check"><input type="checkbox" data-protection="income"/><span><b>Continuidade de renda.</b> Sei por quanto tempo meu caixa suporta redução ou interrupção relevante da renda.</span></label>
+        <label class="check"><input type="checkbox" data-protection="reserve"/><span><b>Reserva e previsíveis.</b> Emergência está separada das despesas anuais conhecidas.</span></label>
+        <label class="check"><input type="checkbox" data-protection="insurance"/><span><b>Seguros relevantes.</b> Revisei coberturas, exclusões, beneficiários e capital segurado quando aplicável.</span></label>
+        <label class="check"><input type="checkbox" data-protection="dependents"/><span><b>Dependentes e beneficiários.</b> Pessoas que dependem da minha renda não estão invisíveis no planejamento.</span></label>
+        <label class="check"><input type="checkbox" data-protection="documents"/><span><b>Documentos e acesso.</b> Contratos, contatos e informações essenciais estão organizados e acessíveis a quem precisa.</span></label>
+        <label class="check"><input type="checkbox" data-protection="cyber"/><span><b>Segurança digital.</b> Uso autenticação forte, canais oficiais e um protocolo contra fraude/engenharia social.</span></label>
+      </div>
+      <div class="legal-note"><strong>Seguros, sucessão e patrimônio familiar:</strong> necessidades dependem de legislação, contratos, regime de bens, dependentes e estrutura patrimonial. Este checklist é educativo e não substitui advogado, contador, corretor habilitado ou planejador qualificado.</div>
+    </div>
+  </section>
+
+  <section class="section" id="rotina">
+    <div class="section-head"><div><div class="kicker">17 / Rotina financeira</div><h2>Transforme análise em sistema de gestão pessoal.</h2></div><div class="section-sub">Um patrimônio bem gerido não precisa ser observado todos os dias. Ele precisa de uma cadência clara.</div></div>
+    <div class="routine-grid">
+      <div class="routine-card" data-cycle="Semanal"><h3>10–15 minutos</h3><ul><li>Checar saldo operacional.</li><li>Identificar despesa fora do padrão.</li><li>Confirmar pagamentos próximos.</li></ul></div>
+      <div class="routine-card" data-cycle="Mensal"><h3>Fechamento do mês</h3><ul><li>Atualizar fluxo e patrimônio.</li><li>Salvar um snapshot.</li><li>Verificar aportes, parcelas e meta.</li></ul></div>
+      <div class="routine-card" data-cycle="Trimestral"><h3>Revisão estratégica</h3><ul><li>Executar stress test.</li><li>Revisar concentração e liquidez.</li><li>Atualizar cenários decisórios.</li></ul></div>
+      <div class="routine-card" data-cycle="Anual"><h3>Auditoria pessoal</h3><ul><li>Rever metas e proteção.</li><li>Organizar documentos.</li><li>Validar impostos e questões profissionais.</li></ul></div>
+    </div>
+  </section>
+
+  <section class="section" id="plano">
+    <div class="section-head"><div><div class="kicker">18 / Plano de 30 dias</div><h2>Saia do diagnóstico com uma sequência executável.</h2></div><div class="section-sub">O plano se adapta aos sinais do painel e inclui fundamentos mesmo quando a base ainda está incompleta.</div></div>
+    <div class="grid g2">
+      <div class="tool"><div class="checklist" id="planChecklist"></div></div>
+      <div class="tool"><h3 id="planHeadline">Comece pela linha de base</h3><p class="help" id="planText">Preencha seus dados e o plano priorizará as maiores vulnerabilidades.</p><div class="advisor" id="planAdvice"><strong>Princípio de execução</strong><br>Uma decisão concluída e medida vale mais do que dez otimizações abertas ao mesmo tempo.</div></div>
+    </div>
+  </section>
+
+  <section class="section" id="historico">
+    <div class="section-head"><div><div class="kicker">19 / Evolução patrimonial</div><h2>Compare posições, não sensações.</h2></div><div class="section-sub">Salve snapshots periódicos com patrimônio líquido, liquidez, margem e score para acompanhar mudanças na estrutura.</div></div>
+    <div class="grid g2">
+      <div class="tool"><button class="btn primary" onclick="saveSnapshot()">Salvar posição atual</button><div class="list" id="historyList" style="margin-top:13px"></div></div>
+      <div class="tool"><h3>Portabilidade e privacidade</h3><p class="help">Os dados ficam no armazenamento local deste navegador. Exportar um backup é a forma de mover ou preservar seu painel entre dispositivos.</p><div class="hero-actions"><button class="btn" onclick="exportData()">Exportar JSON</button><button class="btn" onclick="document.getElementById('importFile').click()">Importar backup</button><input id="importFile" type="file" accept="application/json,.json" hidden onchange="importData(event)"/><button class="btn danger" onclick="resetData()">Apagar dados locais</button></div><div class="legal-note"><strong>Privacidade local não é sincronização.</strong> Limpar os dados do navegador, trocar de dispositivo ou usar outro navegador pode remover o acesso aos registros. Faça backup regularmente.</div></div>
+    </div>
+  </section>
+
+  <section class="section" id="metodologia">
+    <div class="section-head"><div><div class="kicker">20 / Metodologia</div><h2>Veja como o painel chega aos números.</h2></div><div class="section-sub">Transparência de fórmula reduz a chance de interpretar um indicador como verdade absoluta.</div></div>
+    <div class="tool">
+      <div class="method-grid">
+        <div class="formula"><span>Saldo estratégico</span><code>renda − essenciais − variáveis − parcelas</code><p>Não desconta aporte planejado para separar consumo de formação patrimonial.</p></div>
+        <div class="formula"><span>Taxa de formação</span><code>saldo estratégico ÷ renda</code><p>Mostra margem potencial antes do aporte planejado.</p></div>
+        <div class="formula"><span>Patrimônio líquido</span><code>ativos − passivos</code><p>Ativos são somados pelos valores inseridos manualmente.</p></div>
+        <div class="formula"><span>Runway</span><code>ativos líquidos ÷ essenciais mensais</code><p>Ativos líquidos são apenas os itens marcados como líquidos.</p></div>
+        <div class="formula"><span>Projeção</span><code>capitalização mensal com taxa anual convertida</code><p>Taxa constante; sem modelar volatilidade, imposto ou mudanças de aporte.</p></div>
+        <div class="formula"><span>Custo de oportunidade</span><code>capital × (1 + taxa anual)^anos</code><p>Valor futuro hipotético; não representa retorno garantido.</p></div>
+      </div>
+      <h3 style="margin-top:22px">Composição do índice de solidez</h3>
+      <div class="score-method"><div><b>25</b><span>Margem mensal</span></div><div><b>20</b><span>Peso das parcelas</span></div><div><b>20</b><span>Reserva</span></div><div><b>20</b><span>Patrimônio líquido</span></div><div><b>15</b><span>Liquidez</span></div></div>
+      <div class="notice"><strong>O que a nota não é:</strong> não é score de crédito, perfil de investidor, certificação de saúde financeira nem previsão. É um índice educacional de 0 a 100 criado para ordenar os cinco pilares desta ferramenta. Duas pessoas com a mesma pontuação podem precisar de decisões completamente diferentes.</div>
+      <div class="legal-note"><strong>Limites do modelo.</strong> Os dados são manuais; projeções usam taxas constantes; retornos, inflação e taxa de retirada são hipóteses; o simulador de compra simplifica o acréscimo financeiro total; o cálculo de dívidas não substitui o custo efetivo total do contrato; impostos, seguros, sucessão e particularidades jurídicas não são calculados. Use o resultado como ponto de partida e valide decisões relevantes com documentos e profissionais habilitados.</div>
+    </div>
+  </section>
+
+  <section class="section" id="glossario">
+    <div class="section-head">
+      <div><div class="kicker">21 / Biblioteca de referência</div><h2>Glossário financeiro sem linguagem obscura</h2></div>
+      <div class="section-sub">Conceitos essenciais para interpretar o diagnóstico, conversar com instituições e avaliar produtos com mais autonomia.</div>
+    </div>
+    <div class="tool">
+      <dl class="glossary-grid">
+        <div class="glossary-card"><dt>Ativo</dt><dd>Recurso ou direito com valor econômico, como caixa, investimentos, imóveis ou valores a receber.</dd></div>
+        <div class="glossary-card"><dt>Passivo</dt><dd>Obrigação financeira presente, como empréstimo, financiamento, imposto ou conta a pagar.</dd></div>
+        <div class="glossary-card"><dt>Patrimônio líquido</dt><dd>Diferença entre todos os ativos e todos os passivos informados.</dd></div>
+        <div class="glossary-card"><dt>Liquidez</dt><dd>Facilidade de converter um ativo em dinheiro no prazo necessário e por valor razoável.</dd></div>
+        <div class="glossary-card"><dt>Reserva de emergência</dt><dd>Capital acessível destinado a contingências reais, separado de compras e despesas anuais previsíveis.</dd></div>
+        <div class="glossary-card"><dt>Runway financeiro</dt><dd>Número de meses de despesas essenciais que a liquidez disponível consegue cobrir.</dd></div>
+        <div class="glossary-card"><dt>Rentabilidade nominal</dt><dd>Variação percentual do investimento sem descontar o efeito da inflação.</dd></div>
+        <div class="glossary-card"><dt>Rentabilidade real</dt><dd>Ganho de poder de compra após considerar a inflação do período.</dd></div>
+        <div class="glossary-card"><dt>Benchmark</dt><dd>Referência usada para comparar o resultado e o risco de uma estratégia.</dd></div>
+        <div class="glossary-card"><dt>Volatilidade</dt><dd>Intensidade das oscilações de preço. Não resume todos os riscos, mas ajuda a medir instabilidade.</dd></div>
+        <div class="glossary-card"><dt>Diversificação</dt><dd>Distribuição entre fontes diferentes de risco para reduzir dependência de uma única exposição.</dd></div>
+        <div class="glossary-card"><dt>Horizonte</dt><dd>Tempo entre a decisão de investir e o momento em que o capital poderá ser utilizado.</dd></div>
+        <div class="glossary-card"><dt>Marcação a mercado</dt><dd>Atualização do preço de um ativo pelas condições atuais; pode gerar ganho ou perda na venda antecipada.</dd></div>
+        <div class="glossary-card"><dt>Custo de oportunidade</dt><dd>Benefício da melhor alternativa abandonada ao escolher um uso para o capital.</dd></div>
+        <div class="glossary-card"><dt>Risco de crédito</dt><dd>Possibilidade de o emissor não cumprir pagamento de juros ou principal.</dd></div>
+        <div class="glossary-card"><dt>Inflação</dt><dd>Aumento generalizado de preços que reduz o poder de compra do dinheiro ao longo do tempo.</dd></div>
+        <div class="glossary-card"><dt>Taxa de retirada</dt><dd>Percentual anual do patrimônio usado para financiar despesas; é premissa, não garantia de sustentabilidade.</dd></div>
+        <div class="glossary-card"><dt>FGC</dt><dd>Entidade privada que administra mecanismos de proteção para produtos elegíveis, dentro de limites e condições oficiais.</dd></div>
+      </dl>
+      <h3 style="margin-top:23px">Fontes oficiais para continuar estudando</h3>
+      <p class="help reading-shell">Produtos, garantias e regras tributárias podem mudar. Os links abaixo levam às referências institucionais usadas para fundamentar esta central e devem ser consultados novamente antes de qualquer contratação.</p>
+      <div class="source-links">
+        <a class="source-link" href="https://www.bcb.gov.br/cidadaniafinanceira/investindo-dinheiro" target="_blank" rel="noopener noreferrer">Banco Central · investindo dinheiro ↗</a>
+        <a class="source-link" href="https://www.bcb.gov.br/content/cidadaniafinanceira/documentos_cidadania/Cuidando_do_seu_dinheiro_Gestao_de_Financas_Pessoais/caderno_cidadania_financeira.pdf" target="_blank" rel="noopener noreferrer">Banco Central · gestão financeira ↗</a>
+        <a class="source-link" href="https://www.gov.br/investidor/pt-br/investir/antes-de-investir/entenda-as-caracteristicas-dos-investimentos" target="_blank" rel="noopener noreferrer">Portal do Investidor · risco e liquidez ↗</a>
+        <a class="source-link" href="https://www.tesourodireto.com.br/produtos/nossos-produtos" target="_blank" rel="noopener noreferrer">Tesouro Direto · produtos ↗</a>
+        <a class="source-link" href="https://www.fgc.org.br/sobre-garantia-fgc" target="_blank" rel="noopener noreferrer">FGC · garantia ordinária ↗</a>
+        <a class="source-link" href="https://www.bcb.gov.br/content/cidadaniafinanceira/documentos_cidadania/Informacoes_gerais/glossario_cidadania_financeira.pdf" target="_blank" rel="noopener noreferrer">Banco Central · glossário ↗</a>
+      </div>
+      <div class="legal-note"><strong>Finalidade educacional.</strong> Este material não recomenda ativos, instituições, percentuais de alocação ou operações. Não substitui análise de perfil, aconselhamento financeiro individualizado, orientação jurídica, contábil, tributária ou previdenciária. Toda decisão permanece sob responsabilidade do usuário.</div>
+    </div>
+  </section>
+
+  <footer>
+    <div>RAIO‑X FINANCEIRO PRO · Diagnóstico, planejamento e educação financeira</div>
+    <div>Dados locais · uso ilimitado · sem API · sem mensalidade · conteúdo educacional</div>
+  </footer>
+</main>
+</div>
+
+<div class="command-palette" id="commandPalette" hidden role="dialog" aria-modal="true" aria-label="Buscar no workspace">
+  <div class="command-box">
+    <div class="command-head">
+      <input class="command-input" id="commandInput" type="search" autocomplete="off" placeholder="Ir para uma ferramenta ou seção…" aria-label="Buscar seção">
+      <button class="command-close" type="button" onclick="closeCommandPalette()">ESC</button>
+    </div>
+    <div class="command-results" id="commandResults"></div>
+  </div>
+</div>
+
+<section class="report-sheet" id="executiveReport" aria-hidden="true">
+  <div class="report-header">
+    <div class="report-brand">RAIO‑X FINANCEIRO PRO<small>WEALTH INTELLIGENCE · RELATÓRIO PRIVADO</small></div>
+    <div class="report-meta">Emitido em <span id="reportDate">—</span><br>Índice de solidez: <strong id="reportScore">0/100</strong><br>Dados declarados pelo usuário</div>
+  </div>
+  <h1>Diagnóstico financeiro executivo</h1>
+  <p class="report-lead">Síntese educacional da posição informada, com os principais sinais de resiliência, vulnerabilidade e prioridades para o próximo ciclo de decisão.</p>
+  <div class="report-status-box"><b id="reportStatus">Diagnóstico aguardando dados</b><p id="reportStatusText">Preencha o painel antes de gerar o relatório.</p></div>
+  <div class="report-kpis">
+    <div class="report-kpi"><span>Saldo estratégico</span><b id="reportBalance">R$ 0</b></div>
+    <div class="report-kpi"><span>Taxa de formação</span><b id="reportSaveRate">0%</b></div>
+    <div class="report-kpi"><span>Patrimônio líquido</span><b id="reportNetWorth">R$ 0</b></div>
+    <div class="report-kpi"><span>Runway financeiro</span><b id="reportRunway">0 meses</b></div>
+  </div>
+  <div class="report-columns">
+    <div class="report-column"><span>Pilar mais forte</span><b id="reportStrengthTitle">Ainda não identificado</b><p id="reportStrength">Insira os dados financeiros para iniciar a leitura.</p></div>
+    <div class="report-column"><span>Ponto de atenção</span><b id="reportAttentionTitle">Ainda não identificado</b><p id="reportAttention">Insira os dados financeiros para iniciar a leitura.</p></div>
+    <div class="report-column"><span>Próximo movimento</span><b id="reportNextTitle">Construir a linha de base</b><p id="reportNext">Valide fluxo, ativos, passivos e liquidez.</p></div>
+  </div>
+  <div class="report-priorities"><h2>Ordem estratégica sugerida</h2><ol id="reportPriorities"><li>Validar os dados informados.</li><li>Identificar a principal vulnerabilidade.</li><li>Executar uma prioridade por vez.</li></ol></div>
+  <div class="report-disclaimer">Relatório educacional produzido a partir de informações inseridas manualmente. Não constitui recomendação de investimento, análise de crédito, consultoria financeira individualizada, orientação jurídica, contábil, tributária ou previdenciária. Projeções dependem de premissas e não representam promessa de retorno.</div>
+</section>
+
+<nav class="bottom-nav">
+  <a href="#inicio"><b>01</b>Resumo</a>
+  <a href="#raiox"><b>04</b>Fluxo</a>
+  <a href="#patrimonio"><b>05</b>Patrimônio</a>
+  <a href="#academy"><b>15</b>Aprender</a>
+  <a href="#plano"><b>18</b>Plano</a>
+</nav>
+<div class="toast" id="toast">Salvo</div>
+
+<script>
+const STORAGE_KEY='raiox_financeiro_pro_v2';
+const HISTORY_KEY='raiox_financeiro_history_v1';
+const defaultState={
+  fields:{},assets:[
+    {name:'Caixa / conta corrente',type:'Caixa',value:'',liquid:true},
+    {name:'Reserva / renda fixa líquida',type:'Renda fixa',value:'',liquid:true},
+    {name:'Investimentos de longo prazo',type:'Renda variável',value:'',liquid:false},
+    {name:'Imóveis / outros bens',type:'Patrimônio real',value:'',liquid:false}
+  ],plan:{},protection:{},updatedAt:null
+};
+let state=loadState();
+let metrics={};
+const fieldTouched=new Set();
+function clone(v){return JSON.parse(JSON.stringify(v))}
+function normalizeState(candidate={}){
+  const next={...clone(defaultState),...(candidate||{})};
+  next.fields={...(candidate?.fields||{})};
+  next.assets=Array.isArray(candidate?.assets)&&candidate.assets.length?candidate.assets.map(a=>({name:String(a?.name||'Ativo'),type:String(a?.type||'Outros'),value:a?.value??'',liquid:!!a?.liquid})):clone(defaultState.assets);
+  next.plan=(candidate?.plan&&typeof candidate.plan==='object')?candidate.plan:{};
+  next.protection=(candidate?.protection&&typeof candidate.protection==='object')?candidate.protection:{};
+  return next;
+}
+function loadState(){try{return normalizeState(JSON.parse(localStorage.getItem(STORAGE_KEY))||{})}catch(e){return normalizeState({})}}
+function saveState(){state.updatedAt=new Date().toISOString();localStorage.setItem(STORAGE_KEY,JSON.stringify(state))}
+function brl(n){if(!Number.isFinite(n))n=0;return n.toLocaleString('pt-BR',{style:'currency',currency:'BRL',maximumFractionDigits:2})}
+function pct(n,d=1){if(!Number.isFinite(n))n=0;return n.toLocaleString('pt-BR',{minimumFractionDigits:d,maximumFractionDigits:d})+'%'}
+function parseNumber(v){if(typeof v==='number')return Number.isFinite(v)?v:0;if(!v)return 0;let s=String(v).trim().replace(/R\$|\s/g,'');if(s.includes(',')&&s.includes('.'))s=s.replace(/\./g,'').replace(',','.');else if(s.includes(','))s=s.replace(',','.');const n=Number(s.replace(/[^0-9.+-]/g,''));return Number.isFinite(n)?n:0}
+function n(id){return parseNumber(document.getElementById(id)?.value)}
+function setText(id,text){const el=document.getElementById(id);if(el)el.textContent=text}
+function clamp(v,min,max){return Math.min(max,Math.max(min,v))}
+function annualToMonthly(rate){return Math.pow(1+rate/100,1/12)-1}
+function fv(initial,monthly,annualRate,months){const r=annualToMonthly(annualRate);if(!months)return initial;if(Math.abs(r)<1e-9)return initial+monthly*months;return initial*Math.pow(1+r,months)+monthly*((Math.pow(1+r,months)-1)/r)}
+function toast(msg='Salvo'){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');clearTimeout(window.__toast);window.__toast=setTimeout(()=>el.classList.remove('show'),1900)}
+
+const fieldIds=['income','essential','variable','installments','contribution','inflation','liabilities','initialNW','reserveMonths','annualExpenses','goalName','goalTarget','goalCurrent','goalMonths','goalReturn','goalContribution','debtBalance','debtRate','debtPayment','debtExtra','alternativeReturn','scIncome','scExpenses','scContribution','projInitial','projMonthly','projReturn','projYears','purchaseCash','purchaseDown','purchaseInstallments','purchasePayment','purchaseReturn','fiMonthly','withdrawalRate','stressIncomeDrop','stressExpenseRise','stressLiquidityDrop','oppCapital','oppReturn','oppYears'];
+function bindFields(){
+  fieldIds.forEach(id=>{const el=document.getElementById(id);if(!el)return;if(state.fields[id]!==undefined)el.value=state.fields[id];el.addEventListener('input',()=>{fieldTouched.add(id);state.fields[id]=el.value;saveState();updateAll()})});
+  document.querySelectorAll('[data-protection]').forEach(cb=>{const key=cb.dataset.protection;cb.checked=!!state.protection[key];cb.closest('.check')?.classList.toggle('done',cb.checked);cb.addEventListener('change',()=>{state.protection[key]=cb.checked;cb.closest('.check')?.classList.toggle('done',cb.checked);saveState();calcProtection();updateWorkspaceChrome()})});
+}
+function renderAssets(){
+  const box=document.getElementById('assets');box.innerHTML='';
+  state.assets.forEach((a,i)=>{
+    const row=document.createElement('div');row.className='asset-row';
+    row.innerHTML=`<div class="field name"><label>Ativo</label><input value="${escapeHtml(a.name)}" data-k="name"/></div><div class="field"><label>Classe</label><select data-k="type">${['Caixa','Renda fixa','Renda variável','Patrimônio real','Previdência','Exterior','Cripto','Outros'].map(t=>`<option ${t===a.type?'selected':''}>${t}</option>`).join('')}</select></div><div class="field"><label>Valor · ${a.liquid?'líquido':'não líquido'}</label><input data-k="value" inputmode="decimal" value="${escapeHtml(a.value)}" placeholder="0,00"/></div><button class="remove" title="Remover ativo" aria-label="Remover ativo">×</button>`;
+    row.querySelectorAll('input,select').forEach(el=>el.addEventListener('input',()=>{a[el.dataset.k]=el.value;saveState();updateAll()}));
+    const label=row.querySelectorAll('.field label')[2];label.style.cursor='pointer';label.title='Clique para alternar entre líquido e não líquido';label.addEventListener('click',()=>{a.liquid=!a.liquid;renderAssets();saveState();updateAll();toast(a.liquid?'Marcado como líquido':'Marcado como não líquido')});
+    row.querySelector('.remove').addEventListener('click',()=>{state.assets.splice(i,1);renderAssets();saveState();updateAll()});box.appendChild(row);
+  });
+}
+function escapeHtml(s){return String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+function addAsset(){state.assets.push({name:'Novo ativo',type:'Outros',value:'',liquid:false});renderAssets();saveState();updateAll();toast('Ativo adicionado')}
+function getAssets(){const total=state.assets.reduce((s,a)=>s+parseNumber(a.value),0);const liquid=state.assets.filter(a=>a.liquid).reduce((s,a)=>s+parseNumber(a.value),0);const byType={};state.assets.forEach(a=>byType[a.type]=(byType[a.type]||0)+parseNumber(a.value));return{total,liquid,byType}}
+
+function updateAll(){
+  const A=getAssets(),income=n('income'),essential=n('essential'),variable=n('variable'),installments=n('installments'),contribution=n('contribution'),liabilities=n('liabilities');
+  const strategic=income-essential-variable-installments,post=strategic-contribution,saveRate=income>0?strategic/income*100:0,netWorth=A.total-liabilities,runway=essential>0?A.liquid/essential:0;
+  metrics={A,income,essential,variable,installments,contribution,liabilities,strategic,post,saveRate,netWorth,runway};
+  setText('kpiBalance',brl(strategic));setText('kpiSaveRate',pct(saveRate));setText('kpiNetWorth',brl(netWorth));setText('kpiRunway',(Number.isFinite(runway)?runway:0).toLocaleString('pt-BR',{maximumFractionDigits:1})+' meses');
+  const balanceNote=document.getElementById('kpiBalanceNote');if(balanceNote)balanceNote.textContent=income?`Caixa pós-aporte: ${brl(post)}.`:'Insira renda e despesas para iniciar a leitura.';
+  calcCashFlow();renderAllocation();calcReserve();calcGoal();calcDebt();calcScenario();calcProjection();calcPurchase();calcIndependence();calcStress();calcOpportunity();calcScore();calcExecutive();calcReadiness();calcProtection();renderPlan();populateReport();updateWorkspaceChrome();
+}
+function calcCashFlow(){
+  const m=metrics;if(!m.income){setText('cashFlowOutput','Informe sua renda e despesas. O painel mostrará a margem mensal, o peso de cada grupo e se o aporte planejado cabe no caixa.');setText('cashFlowAdvice','Parecer do painel\nUma boa decisão começa distinguindo gasto de consumo, obrigação contratual e formação de patrimônio.');return}
+  const committed=m.essential+m.variable+m.installments,committedPct=committed/m.income*100,installPct=m.installments/m.income*100;
+  setText('cashFlowOutput',`Renda ${brl(m.income)} · consumo e obrigações ${brl(committed)} (${pct(committedPct)}) · saldo estratégico ${brl(m.strategic)} · aporte planejado ${brl(m.contribution)} · caixa pós-aporte ${brl(m.post)}.`);
+  let advice='';if(m.strategic<0)advice='Seu consumo e obrigações superam a renda. A prioridade é interromper o déficit antes de elevar aportes ou assumir novos compromissos.';else if(m.post<0)advice='Existe margem antes do aporte, mas o aporte planejado excede o caixa disponível. Redimensione o plano para evitar compensar investimento com dívida ou descapitalização.';else if(installPct>30)advice='A margem é positiva, porém parcelas consomem uma fatia relevante da renda. Avalie contratos e evite perder flexibilidade para compromissos recorrentes.';else if(m.saveRate>=20)advice='Sua margem declarada cria espaço relevante para proteção e formação patrimonial. Confirme se despesas anuais e irregulares já estão provisionadas.';else advice='O caixa está positivo. O próximo ganho de qualidade vem de proteger liquidez e criar uma margem sustentável, em vez de perseguir apenas um percentual de aporte.';
+  setText('cashFlowAdvice','Parecer do painel\n'+advice);
+}
+function renderAllocation(){
+  const {total,byType}=metrics.A||getAssets(),colors=['#d4af37','#69c994','#a894c8','#d9a441','#b87955','#7ea6a0','#c16c79','#80776a'];const entries=Object.entries(byType).filter(([,v])=>v>0);
+  const donut=document.getElementById('allocationDonut'),legend=document.getElementById('allocationLegend');if(!donut||!legend)return;
+  if(!entries.length||!total){donut.style.background='conic-gradient(#1b1912 0 100%)';legend.innerHTML='<div class="notice">Cadastre valores para visualizar a composição.</div>';return}
+  let start=0,segments=[];legend.innerHTML='';entries.forEach(([type,val],i)=>{const share=val/total*100,end=start+share,color=colors[i%colors.length];segments.push(`${color} ${start}% ${end}%`);start=end;legend.insertAdjacentHTML('beforeend',`<div class="legend-item"><div class="legend-left"><span class="dot" style="color:${color};background:${color}"></span>${escapeHtml(type)}</div><b>${pct(share)}</b></div>`)});donut.style.background=`conic-gradient(${segments.join(',')})`;
+  const top=[...entries].sort((a,b)=>b[1]-a[1])[0],share=top[1]/total*100;setText('assetAdvice','Leitura patrimonial\n'+(share>65?`${top[0]} representa ${pct(share)} dos ativos declarados. Isso é um sinal de concentração para investigar — não uma ordem automática de venda.`:`A maior classe é ${top[0]} com ${pct(share)}. Avalie a composição junto com liquidez, objetivo e riscos, não apenas o número de classes.`));
+}
+function calcReserve(){
+  const months=Math.max(1,n('reserveMonths')||6),annual=n('annualExpenses'),essential=metrics.essential||0,liquid=metrics.A?.liquid||0,target=essential*months,ratio=target>0?liquid/target:0,runway=essential>0?liquid/essential:0,bar=document.getElementById('reserveBar');if(bar)bar.style.width=clamp(ratio*100,0,100)+'%';
+  if(!essential){setText('reserveOutput','Informe despesas essenciais e ativos líquidos para calcular cobertura.');return}
+  setText('reserveOutput',`Liquidez declarada ${brl(liquid)} · cobertura ${runway.toLocaleString('pt-BR',{maximumFractionDigits:1})} meses · referência escolhida ${months} meses (${brl(target)}) · despesas previsíveis anuais ${brl(annual)}.`);
+  let txt=ratio>=1.25?'A cobertura supera a referência escolhida. Verifique se parte da liquidez possui função além da reserva e se as despesas anuais estão separadas.':ratio>=1?'A referência escolhida está coberta. Preserve a separação entre contingência, caixa operacional e despesas previsíveis.':runway>=1?'Existe alguma proteção, mas abaixo da hipótese escolhida. O tamanho ideal depende da sua estabilidade de renda e riscos pessoais.':'A liquidez cobre menos de um mês de essenciais. Elevar previsibilidade e acesso a caixa tende a ter prioridade sobre riscos desnecessários.';setText('reserveAdvice','Próxima decisão\n'+txt);
+}
+function calcGoal(){
+  const target=n('goalTarget'),current=n('goalCurrent'),months=Math.max(0,n('goalMonths')),rate=n('goalReturn'),possible=n('goalContribution'),name=document.getElementById('goalName')?.value||'Meta';if(!target||!months){setText('goalOutput','Defina valor, prazo e capital atual para estimar o aporte mensal necessário.');return}
+  const r=annualToMonthly(rate),growth=current*Math.pow(1+r,months),factor=Math.abs(r)<1e-9?months:(Math.pow(1+r,months)-1)/r,needed=Math.max(0,(target-growth)/factor),projected=fv(current,possible,rate,months),gap=target-projected;
+  setText('goalOutput',`${name}: para buscar ${brl(target)} em ${months} meses sob a hipótese de ${pct(rate)} a.a., o aporte matemático aproximado é ${brl(needed)}/mês. Com ${brl(possible)}/mês, a projeção seria ${brl(projected)}.`);setText('goalAdvice','Decisão\n'+(gap>0?`A hipótese atual deixa uma diferença aproximada de ${brl(gap)}. Ajuste prazo, valor-alvo ou aporte; elevar retorno esperado apenas para “fechar a conta” também eleva incerteza.`:`Pelas premissas informadas, o aporte possível alcança ou supera o alvo matemático. Revise a compatibilidade entre o investimento escolhido, o prazo e a necessidade de liquidez.`));
+}
+function calcDebt(){
+  const balance=n('debtBalance'),monthly=n('debtRate')/100,payment=n('debtPayment'),extra=n('debtExtra'),alt=n('alternativeReturn');if(!balance||monthly<=0){setText('debtOutput','Informe saldo e taxa para comparar o custo financeiro com uma alternativa hipotética.');return}
+  const annualDebt=(Math.pow(1+monthly,12)-1)*100,monthlyInterest=balance*monthly,altMonthly=annualToMonthly(alt),altValue=extra?fv(extra,0,alt,1):0;
+  let payoff='';if(payment>monthlyInterest){const months=Math.log(payment/(payment-balance*monthly))/Math.log(1+monthly);if(Number.isFinite(months)&&months>0)payoff=` Prazo teórico com parcela constante: ~${Math.ceil(months)} meses.`}else if(payment>0)payoff=' A parcela informada não supera os juros do primeiro mês na simplificação usada.';
+  setText('debtOutput',`Custo equivalente aproximado da taxa informada: ${pct(annualDebt)} a.a. · juros do primeiro mês: ${brl(monthlyInterest)}.${payoff}`);setText('debtAdvice','Parecer\n'+(annualDebt>alt?`A taxa da dívida (${pct(annualDebt)} a.a. equivalente) supera a hipótese alternativa (${pct(alt)} a.a.). Isso fortalece o argumento matemático para amortização, desde que você preserve liquidez adequada e confirme o CET/condições do contrato.`:`A hipótese alternativa é maior que a taxa equivalente da dívida, mas isso não torna investimento automaticamente superior: retorno futuro é incerto, enquanto a economia de juros de uma amortização pode ser contratualmente mais previsível.`));
+}
+function calcScenario(){const di=n('scIncome'),de=n('scExpenses'),dc=n('scContribution');if(!(di||de||dc)){setText('scenarioOutput','O comparador mostrará a nova margem e o efeito anual aproximado sobre a capacidade de formar patrimônio.');return}const newIncome=metrics.income+di,newStrategic=metrics.strategic+di-de,newPost=newStrategic-(metrics.contribution+dc),annualDelta=(di-de-dc)*12;setText('scenarioOutput',`Cenário: renda ${brl(newIncome)} · saldo estratégico ${brl(newStrategic)} · caixa pós-aporte ${brl(newPost)} · diferença anual de caixa pós-aporte ${brl(annualDelta)}.`);setText('scenarioAdvice','Cenário\n'+(newPost<0?'A combinação testada cria déficit após aporte. Redesenhe a mudança antes de transformá-la em compromisso fixo.':annualDelta>0?'O cenário aumenta sua flexibilidade anual. Defina antecipadamente para onde essa margem extra iria: reserva, amortização, meta ou investimento.':'O cenário reduz a flexibilidade anual. Confirme se o benefício da mudança compensa esse custo recorrente.'))}
+function calcProjection(){
+  let initial=n('projInitial'),monthly=n('projMonthly'),rate=n('projReturn'),years=Math.max(1,n('projYears')||10);if(!fieldTouched.has('projInitial')&&!initial&&metrics.netWorth>0)initial=Math.max(0,metrics.netWorth);if(!fieldTouched.has('projMonthly')&&!monthly&&metrics.contribution>0)monthly=metrics.contribution;
+  const final=fv(initial,monthly,rate,years*12),contributed=initial+monthly*years*12,growth=final-contributed;setText('projectionOutput',`Em ${years} anos, a projeção matemática chega a ${brl(final)}. Capital aportado: ${brl(contributed)} · crescimento hipotético: ${brl(growth)}.`);drawProjection(initial,monthly,rate,years);
+}
+function drawProjection(initial,monthly,rate,years){
+  const canvas=document.getElementById('projectionChart');if(!canvas)return;const rect=canvas.getBoundingClientRect(),dpr=window.devicePixelRatio||1,w=Math.max(300,Math.floor(rect.width)),h=Math.max(220,Math.floor(rect.height));canvas.width=w*dpr;canvas.height=h*dpr;const ctx=canvas.getContext('2d');ctx.scale(dpr,dpr);ctx.clearRect(0,0,w,h);const pad={l:47,r:16,t:20,b:34},pw=w-pad.l-pad.r,ph=h-pad.t-pad.b,vals=[];for(let y=0;y<=years;y++)vals.push(fv(initial,monthly,rate,y*12));const max=Math.max(1,...vals)*1.08;ctx.strokeStyle='rgba(212,175,55,.12)';ctx.lineWidth=1;ctx.font='9px Plus Jakarta Sans';ctx.fillStyle='#777168';ctx.textAlign='right';for(let i=0;i<=4;i++){const y=pad.t+ph*i/4;ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(w-pad.r,y);ctx.stroke();const val=max*(1-i/4);ctx.fillText(shortMoney(val),pad.l-7,y+3)}ctx.textAlign='center';ctx.strokeStyle='#d4af37';ctx.lineWidth=2.2;ctx.beginPath();vals.forEach((v,i)=>{const x=pad.l+pw*i/years,y=pad.t+ph*(1-v/max);i?ctx.lineTo(x,y):ctx.moveTo(x,y)});ctx.stroke();const grad=ctx.createLinearGradient(0,pad.t,0,h-pad.b);grad.addColorStop(0,'rgba(212,175,55,.18)');grad.addColorStop(1,'rgba(212,175,55,0)');ctx.lineTo(pad.l+pw,h-pad.b);ctx.lineTo(pad.l,h-pad.b);ctx.closePath();ctx.fillStyle=grad;ctx.fill();ctx.fillStyle='#777168';ctx.textAlign='center';const step=Math.max(1,Math.ceil(years/5));for(let y=0;y<=years;y+=step)ctx.fillText(`${y}a`,pad.l+pw*y/years,h-11);if(years%step!==0)ctx.fillText(`${years}a`,w-pad.r,h-11);
+}
+function shortMoney(v){if(v>=1000000)return 'R$ '+(v/1000000).toLocaleString('pt-BR',{maximumFractionDigits:1})+' mi';if(v>=1000)return 'R$ '+(v/1000).toLocaleString('pt-BR',{maximumFractionDigits:0})+'k';return 'R$ '+Math.round(v)}
+function calcPurchase(){const cash=n('purchaseCash'),down=n('purchaseDown'),count=n('purchaseInstallments'),payment=n('purchasePayment'),rate=n('purchaseReturn');if(!cash||!count||!payment){setText('purchaseOutput','Informe as condições para comparar custo nominal e uso alternativo do capital.');return}const total=down+count*payment,premium=total-cash,opportunity=fv(cash,0,rate,count)-cash;setText('purchaseOutput',`À vista ${brl(cash)} · parcelado nominal ${brl(total)} · diferença ${brl(premium)}. Se ${brl(cash)} permanecesse aplicado por ${count} meses sob ${pct(rate)} a.a., o crescimento hipotético seria ${brl(opportunity)}.`);setText('purchaseAdvice','Decisão\n'+(premium>opportunity?`O acréscimo nominal do parcelamento supera o crescimento hipotético do capital no mesmo prazo. Compare também desconto à vista, liquidez e segurança de manter caixa.`:`Pelas hipóteses, preservar o capital tem valor financeiro potencial relevante, mas o retorno não é garantido. Confirme se a parcela cabe confortavelmente sem comprometer metas e reserva.`))}
+function calcIndependence(){const monthly=n('fiMonthly'),wr=n('withdrawalRate');if(!monthly||!wr){setText('fiOutput','Defina o custo anual e uma taxa de retirada hipotética para estimar capital de referência.');return}const capital=monthly*12/(wr/100),gap=Math.max(0,capital-Math.max(0,metrics.netWorth||0));setText('fiOutput',`Custo anual ${brl(monthly*12)}. Com taxa de retirada hipotética de ${pct(wr)}, o capital de referência é ${brl(capital)}. Diferença em relação ao patrimônio líquido informado: ${brl(gap)}.`)}
+function calcStress(){const income=metrics.income,essential=metrics.essential,liquid=metrics.A?.liquid||0;if(!income&&!essential){setText('stressOutput','Preencha a base financeira para executar o stress test.');return}const drop=clamp(n('stressIncomeDrop'),0,100)/100,rise=Math.max(0,n('stressExpenseRise'))/100,liqDrop=clamp(n('stressLiquidityDrop'),0,100)/100,newIncome=income*(1-drop),newEssential=essential*(1+rise),newLiquid=liquid*(1-liqDrop),stressCash=newIncome-newEssential-metrics.variable-metrics.installments,stressRunway=newEssential>0?newLiquid/newEssential:0;setText('stressOutput',`Sob o cenário: renda ${brl(newIncome)} · essenciais ${brl(newEssential)} · margem antes de aportes ${brl(stressCash)} · liquidez remanescente ${brl(newLiquid)} · cobertura ${stressRunway.toLocaleString('pt-BR',{maximumFractionDigits:1})} meses.`);setText('stressAdvice','Resiliência\n'+(stressCash<0&&stressRunway<3?'O cenário combina déficit e pouca cobertura líquida. Crie um plano de contingência explícito: despesas cortáveis, linhas de apoio, seguros aplicáveis e nível de caixa alvo.':stressCash<0?'A renda estressada não cobre o padrão atual, mas a liquidez oferece alguma ponte. Defina quanto tempo você aceitaria financiar o déficit antes de reduzir custos.':'A estrutura permanece com margem positiva neste teste. Isso não elimina outros riscos, mas indica menor dependência de uma única condição de renda.'))}
+function calcOpportunity(){const capital=n('oppCapital'),rate=n('oppReturn'),years=n('oppYears');if(!capital||!years){setText('oppOutput','Informe um capital para estimar seu valor futuro hipotético.');return}const future=capital*Math.pow(1+rate/100,years);setText('oppOutput',`${brl(capital)} hoje corresponderiam a ${brl(future)} em ${years} anos sob a hipótese constante de ${pct(rate)} a.a. Diferença nominal hipotética: ${brl(future-capital)}.`)}
+function scoreComponents(){
+  const m=metrics;if(!m.income&&!m.A?.total)return {margin:0,debt:0,reserve:0,net:0,liq:0,total:0};const margin=clamp((m.saveRate+5)/30,0,1)*25,debtRatio=m.income>0?m.installments/m.income:1,debt=clamp((.4-debtRatio)/.4,0,1)*20,reserve=clamp((m.runway||0)/6,0,1)*20,net=m.netWorth>0?20:m.netWorth===0?5:0,liq=m.A.total>0?clamp(m.A.liquid/m.A.total/.25,0,1)*15:0,total=Math.round(margin+debt+reserve+net+liq);return{margin,debt,reserve,net,liq,total}}
+function calcScore(){
+  const s=scoreComponents(),score=s.total,ring=document.getElementById('scoreRing');if(ring)ring.style.background=`conic-gradient(#d4af37 ${score*3.6}deg,#1b1912 0)`;setText('scoreValue',score);setText('scoreLabel',score>=80?'Estrutura robusta':score>=60?'Base funcional':score>=40?'Estrutura em desenvolvimento':'Base vulnerável ou incompleta');
+  const values=[['Margem mensal',s.margin,25],['Peso das parcelas',s.debt,20],['Reserva',s.reserve,20],['Patrimônio líquido',s.net,20],['Liquidez',s.liq,15]],box=document.getElementById('scoreInsights');if(box){box.innerHTML='';values.forEach(([name,val,max])=>box.insertAdjacentHTML('beforeend',`<div class="insight"><b>${name}</b>${Math.round(val)} de ${max} pontos.<br><span style="color:#746e64">Indicador interno do modelo.</span></div>`))}
+}
+function calcExecutive(){
+  const s=scoreComponents(),m=metrics,hasBase=m.income>0||m.A.total>0||m.liabilities>0;let status='Aguardando base',cls='amber',headline='Seu painel ainda precisa de uma linha de base.',summary='Preencha fluxo, patrimônio e liquidez para transformar este espaço em um parecer financeiro personalizado.',metricTitle='Construção da base',metricText='Comece com os números reais do mês e a posição patrimonial atual.';
+  const risks=[],strengths=[];
+  if(m.income){if(m.strategic<0)risks.push({p:100,title:'Fluxo mensal em déficit',text:`O consumo e obrigações excedem a renda em ${brl(Math.abs(m.strategic))} por mês.`});else if(m.post<0)risks.push({p:92,title:'Aporte acima do caixa',text:`O plano de aporte cria caixa pós-aporte de ${brl(m.post)}.`});else strengths.push({p:Math.min(90,40+m.saveRate),title:'Margem mensal positiva',text:`A margem potencial é ${pct(m.saveRate)} da renda antes dos aportes planejados.`});if(m.income>0&&m.installments/m.income>.3)risks.push({p:82,title:'Peso elevado de parcelas',text:`Parcelas consomem ${pct(m.installments/m.income*100)} da renda líquida.`});}
+  if(m.essential){if(m.runway<1)risks.push({p:95,title:'Liquidez muito curta',text:`Ativos líquidos cobrem apenas ${m.runway.toLocaleString('pt-BR',{maximumFractionDigits:1})} meses de essenciais.`});else if(m.runway<3)risks.push({p:78,title:'Cobertura de liquidez curta',text:`A cobertura líquida declarada é ${m.runway.toLocaleString('pt-BR',{maximumFractionDigits:1})} meses.`});else strengths.push({p:Math.min(90,45+m.runway*5),title:'Camada de liquidez existente',text:`A liquidez cobre ${m.runway.toLocaleString('pt-BR',{maximumFractionDigits:1})} meses de despesas essenciais.`});}
+  if(m.A.total||m.liabilities){if(m.netWorth<0)risks.push({p:98,title:'Patrimônio líquido negativo',text:`Os passivos excedem os ativos em ${brl(Math.abs(m.netWorth))}.`});else strengths.push({p:Math.min(86,50+(m.netWorth>0?20:0)),title:'Patrimônio líquido positivo',text:`A posição líquida declarada é ${brl(m.netWorth)}.`});if(m.A.total>0&&m.A.liquid/m.A.total<.08)risks.push({p:67,title:'Patrimônio pouco líquido',text:'Menos de 8% dos ativos declarados estão marcados como líquidos.'});}
+  risks.sort((a,b)=>b.p-a.p);strengths.sort((a,b)=>b.p-a.p);
+  const priorities=[];if(m.income<=0)priorities.push('Validar renda e despesas do mês.');if(m.strategic<0)priorities.push('Interromper o déficit mensal e revisar gastos/obrigações.');if(m.post<0&&m.strategic>=0)priorities.push('Redimensionar o aporte para caber no caixa real.');if(m.essential>0&&m.runway<3)priorities.push('Elevar a camada de liquidez compatível com seu risco de renda.');if(m.income>0&&m.installments/m.income>.3)priorities.push('Revisar contratos e peso das parcelas antes de novos compromissos.');if(m.A.total<=0)priorities.push('Consolidar ativos e passivos em uma única posição.');if(priorities.length<3)priorities.push('Separar despesas anuais previsíveis da reserva.','Registrar uma posição e revisar o painel em 30 dias.','Usar cenários antes de mudanças financeiras relevantes.');
+  if(hasBase){status=s.total>=80?'Estrutura robusta':s.total>=60?'Base funcional':s.total>=40?'Estrutura em desenvolvimento':'Atenção elevada';cls=s.total>=65?'green':s.total>=40?'amber':'red';if(risks[0]){headline=risks[0].title+'.';summary=risks[0].text+' O restante do painel deve ser lido a partir dessa prioridade.';metricTitle=risks[0].title;metricText=risks[0].text}else{headline='Nenhuma vulnerabilidade crítica apareceu na base informada.';summary='Isso não significa ausência de risco. Use a rotina, proteção e central de investimentos para aprofundar a qualidade das decisões.';metricTitle='Índice de solidez';metricText=`A leitura interna do painel está em ${s.total}/100.`}}
+  const tag=document.getElementById('execStatusTag');if(tag){tag.className='tag '+cls;tag.textContent=status}const dot=document.getElementById('execStatusDot');if(dot)dot.style.background=cls==='green'?'var(--green)':cls==='red'?'var(--red)':'var(--amber)';setText('execHeadline',headline);setText('execSummary',summary);setText('execMetricTitle',metricTitle);setText('execMetricText',metricText);setText('execStrengthTitle',strengths[0]?.title||'Ainda não identificado');setText('execStrengthText',strengths[0]?.text||'O painel precisa de mais dados para identificar um pilar forte.');setText('execAttentionTitle',risks[0]?.title||'Sem alerta crítico na base');setText('execAttentionText',risks[0]?.text||'Continue validando proteção, concentração, metas e contratos.');setText('execNextTitle',priorities[0]||'Revisar a estratégia');setText('execNextText','Execute a prioridade principal antes de dispersar esforço em otimizações menores.');const ol=document.getElementById('execPriorities');if(ol)ol.innerHTML=priorities.slice(0,3).map(x=>`<li>${escapeHtml(x)}</li>`).join('');metrics.executive={status,headline,summary,strength:strengths[0],risk:risks[0],priorities:priorities.slice(0,3),score:s.total};
+}
+function calcReadiness(){
+  const m=metrics,steps=[{ok:m.income>0&&m.strategic>=0,text:'Fluxo sem déficit estrutural declarado'},{ok:m.essential>0&&m.runway>=3,text:'Camada mínima de liquidez estruturada'},{ok:!(m.income>0&&m.installments/m.income>.35),text:'Parcelas sem pressão extrema sobre a renda'},{ok:m.netWorth>=0,text:'Patrimônio líquido não negativo'}],done=steps.filter(s=>s.ok).length,ul=document.getElementById('readinessSteps');if(ul)ul.innerHTML=steps.map(s=>`<li class="${s.ok?'done':''}">${s.text}</li>`).join('');if(done===4){setText('readinessTitle','Base declarada mais preparada para risco');setText('readinessText','Os quatro filtros básicos foram atendidos na base informada. Isso não define perfil nem autoriza risco; significa apenas que o processo pode avançar para objetivo, horizonte e análise de produtos.')}else if(done>=2){setText('readinessTitle','Base parcialmente estruturada');setText('readinessText',`${done} de 4 filtros básicos estão atendidos. Resolva as lacunas relevantes sem deixar de estudar os investimentos compatíveis com suas metas.`)}else{setText('readinessTitle','Estruture a base primeiro');setText('readinessText',`${done} de 4 filtros básicos estão atendidos. Liquidez, caixa ou endividamento podem exigir prioridade antes de elevar risco.`)}
+}
+function calcProtection(){const checks=[...document.querySelectorAll('[data-protection]')],done=checks.filter(c=>c.checked).length;setText('protectionScore',`${done} / ${checks.length||6}`);setText('protectionTitle',done===6?'Protocolo essencial revisado':done>=4?'Proteção em boa evolução':done?'Proteção parcialmente revisada':'Protocolo não iniciado');setText('protectionText',done===6?'Todos os pontos essenciais foram marcados como revisados. Reavalie após mudanças familiares, contratuais ou patrimoniais.':'Marque apenas o que foi realmente revisado; itens não marcados podem orientar sua próxima conversa ou checagem.')}
+function buildPlan(){
+  const m=metrics,tasks=[];const add=(key,text,reason)=>{if(!tasks.some(t=>t.key===key))tasks.push({key,text,reason})};add('baseline','Registrar uma linha de base com números reais','Sem uma base confiável, qualquer comparação futura perde valor.');if(m.income&&m.strategic<0)add('deficit','Definir um corte ou renegociação que elimine o déficit mensal','Déficit recorrente consome liquidez e transforma investimento em prioridade secundária.');if(m.income&&m.post<0&&m.strategic>=0)add('aporte','Redimensionar o aporte planejado para não gerar caixa negativo','Aporte sustentável não deveria depender de dívida ou descapitalização contínua.');if(m.essential&&m.runway<3)add('liquidity','Criar um plano de reforço de liquidez','Sua cobertura líquida está abaixo de três meses de despesas essenciais na base informada.');if(m.income&&m.installments/m.income>.3)add('debt','Listar contratos por taxa, saldo, prazo e CET','O peso das parcelas exige mais visibilidade antes de novos compromissos.');add('annual','Separar despesas anuais previsíveis da reserva','Provisionar o que já é conhecido evita falsos “imprevistos”.');add('goal','Escolher uma meta com valor e prazo explícitos','Meta mensurável ajuda a definir liquidez e risco compatíveis.');add('protection','Revisar o protocolo de proteção patrimonial','Continuidade de renda, seguros, dependentes e segurança digital são parte do patrimônio.');add('scenario','Testar uma decisão relevante no comparador de cenários','Simular antes reduz decisões baseadas apenas em sensação.');add('review7','Fazer uma revisão rápida em 7 dias','Confirme se a primeira prioridade saiu do papel.');add('review30','Salvar novo snapshot em 30 dias e comparar','Melhoria financeira precisa ser observável, não apenas percebida.');return tasks.slice(0,8)}
+function renderPlan(){const tasks=buildPlan(),box=document.getElementById('planChecklist');if(!box)return;box.innerHTML='';tasks.forEach(t=>{const label=document.createElement('label');label.className='check'+(state.plan[t.key]?' done':'');label.innerHTML=`<input type="checkbox" ${state.plan[t.key]?'checked':''}/><span><b>${escapeHtml(t.text)}</b><br>${escapeHtml(t.reason)}</span>`;const cb=label.querySelector('input');cb.addEventListener('change',()=>{state.plan[t.key]=cb.checked;label.classList.toggle('done',cb.checked);saveState();renderPlan();updateWorkspaceChrome()});box.appendChild(label)});const done=tasks.filter(t=>state.plan[t.key]).length,next=tasks.find(t=>!state.plan[t.key]);setText('planHeadline',next?`Próximo passo: ${next.text}`:'Ciclo essencial concluído');setText('planText',next?`${done} de ${tasks.length} ações concluídas. ${next.reason}`:`Você concluiu as ações deste ciclo. Salve uma posição e inicie uma nova revisão com dados atualizados.`)}
+function getHistory(){try{const h=JSON.parse(localStorage.getItem(HISTORY_KEY));return Array.isArray(h)?h:[]}catch(e){return[]}}
+function setHistory(h){localStorage.setItem(HISTORY_KEY,JSON.stringify(h))}
+function saveSnapshot(){updateAll();const h=getHistory(),snap={id:Date.now(),date:new Date().toISOString(),netWorth:metrics.netWorth,liquid:metrics.A.liquid,balance:metrics.strategic,score:scoreComponents().total};h.unshift(snap);setHistory(h.slice(0,24));renderHistory();updateWorkspaceChrome();toast('Posição salva')}
+function deleteSnapshot(id){setHistory(getHistory().filter(x=>x.id!==id));renderHistory();updateWorkspaceChrome();toast('Registro removido')}
+function renderHistory(){const h=getHistory(),box=document.getElementById('historyList');if(!box)return;if(!h.length){box.innerHTML='<div class="notice">Nenhuma posição salva. Registre seu primeiro ponto de comparação.</div>';return}box.innerHTML=h.slice(0,8).map(s=>`<div class="snapshot"><div><b>${new Date(s.date).toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'})}</b><br><small>PL ${brl(s.netWorth)} · liquidez ${brl(s.liquid)} · margem ${brl(s.balance)} · índice ${s.score}/100</small></div><div class="snapshot-actions"><button class="mini" onclick="deleteSnapshot(${s.id})">Remover</button></div></div>`).join('')}
+function loadDemo(){
+  const demo={income:'18000',essential:'6200',variable:'2800',installments:'1600',contribution:'3500',inflation:'4,5',liabilities:'48000',initialNW:'260000',reserveMonths:'6',annualExpenses:'18000',goalName:'Entrada para imóvel',goalTarget:'220000',goalCurrent:'80000',goalMonths:'48',goalReturn:'8',goalContribution:'2200',debtBalance:'48000',debtRate:'0,85',debtPayment:'2200',debtExtra:'1000',alternativeReturn:'8',scIncome:'0',scExpenses:'-700',scContribution:'700',projInitial:'300000',projMonthly:'3500',projReturn:'8',projYears:'12',purchaseCash:'90000',purchaseDown:'20000',purchaseInstallments:'24',purchasePayment:'3300',purchaseReturn:'8',fiMonthly:'12000',withdrawalRate:'4',stressIncomeDrop:'35',stressExpenseRise:'12',stressLiquidityDrop:'10',oppCapital:'50000',oppReturn:'8',oppYears:'10'};
+  state.fields={...state.fields,...demo};state.assets=[{name:'Caixa e conta corrente',type:'Caixa',value:'42000',liquid:true},{name:'Renda fixa de alta liquidez',type:'Renda fixa',value:'85000',liquid:true},{name:'Carteira de longo prazo',type:'Renda variável',value:'125000',liquid:false},{name:'Previdência',type:'Previdência',value:'65000',liquid:false},{name:'Bens e outros',type:'Patrimônio real',value:'35000',liquid:false}];saveState();fieldIds.forEach(id=>{const el=document.getElementById(id);if(el&&state.fields[id]!==undefined)el.value=state.fields[id]});renderAssets();updateAll();toast('Demonstração carregada')
+}
+function exportData(){const payload={product:'RAIO-X Financeiro PRO',version:2,exportedAt:new Date().toISOString(),state,history:getHistory()};const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='raio-x-financeiro-backup-'+new Date().toISOString().slice(0,10)+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);toast('Backup exportado')}
+function importData(event){const file=event.target.files?.[0];if(!file)return;const reader=new FileReader();reader.onload=()=>{try{const data=JSON.parse(reader.result);state=normalizeState(data.state||data);if(Array.isArray(data.history))setHistory(data.history.slice(0,24));saveState();location.reload()}catch(e){alert('Não foi possível importar este arquivo. Confirme se é um backup JSON válido do RAIO-X.')}};reader.readAsText(file);event.target.value=''}
+function resetData(){if(!confirm('Apagar todos os dados locais deste painel neste navegador? Faça um backup antes se quiser preservar o histórico.'))return;localStorage.removeItem(STORAGE_KEY);localStorage.removeItem(HISTORY_KEY);location.reload()}
+function populateReport(){const e=metrics.executive||{};setText('reportDate',new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'}));setText('reportScore',(e.score||0)+'/100');setText('reportStatus',e.status||'Diagnóstico aguardando dados');setText('reportStatusText',e.summary||'Preencha o painel antes de gerar o relatório.');setText('reportBalance',brl(metrics.strategic||0));setText('reportSaveRate',pct(metrics.saveRate||0));setText('reportNetWorth',brl(metrics.netWorth||0));setText('reportRunway',`${(metrics.runway||0).toLocaleString('pt-BR',{maximumFractionDigits:1})} meses`);setText('reportStrengthTitle',e.strength?.title||'Ainda não identificado');setText('reportStrength',e.strength?.text||'Insira os dados financeiros para iniciar a leitura.');setText('reportAttentionTitle',e.risk?.title||'Sem alerta crítico na base');setText('reportAttention',e.risk?.text||'Continue validando proteção, concentração, metas e contratos.');setText('reportNextTitle',e.priorities?.[0]||'Construir a linha de base');setText('reportNext','Execute a prioridade principal antes de dispersar esforço em otimizações menores.');const ol=document.getElementById('reportPriorities');if(ol)ol.innerHTML=(e.priorities?.length?e.priorities:['Validar os dados informados.','Identificar a principal vulnerabilidade.','Executar uma prioridade por vez.']).map(x=>`<li>${escapeHtml(x)}</li>`).join('')}
+function printReport(){populateReport();window.print()}
+
+function workspaceMilestones(){
+  const m=metrics,A=m.A||getAssets(),history=getHistory();
+  const flow=m.income>0&&(m.essential>0||m.variable>0||m.installments>0);
+  const assets=A.total>0;
+  const reserve=m.essential>0&&A.liquid>0;
+  const baseline=history.length>0;
+  return {flow,assets,reserve,baseline,count:[flow,assets,reserve,baseline].filter(Boolean).length};
+}
+function updateWorkspaceChrome(){
+  const ms=workspaceMilestones(),progress=ms.count*25;
+  ['sideProgressBar','workspaceProgressBar'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.width=progress+'%'});
+  setText('sideProgressText',progress+'% estruturado');setText('workspaceProgressText',progress+'%');
+  let title='Mapeie seu fluxo mensal',text='Renda e despesas formam a primeira camada do diagnóstico.',href='#raiox';
+  if(ms.flow&&!ms.assets){title='Consolide seu patrimônio';text='Cadastre ativos e passivos para separar renda de riqueza acumulada.';href='#patrimonio'}
+  else if(ms.flow&&ms.assets&&!ms.reserve){title='Defina sua camada de liquidez';text='Marque o que é realmente líquido e compare com suas despesas essenciais.';href='#reserva'}
+  else if(ms.flow&&ms.assets&&ms.reserve&&!ms.baseline){title='Registre sua linha de base';text='Salve a posição atual para transformar o painel em um sistema de acompanhamento.';href='#historico'}
+  else if(progress===100){title='Base estruturada. Agora execute.';text='Use o parecer executivo e o plano de 30 dias para priorizar a próxima decisão.';href='#executivo'}
+  setText('workspaceNextTitle',title);setText('workspaceNextText',text);const link=document.getElementById('workspaceNextLink');if(link)link.href=href;
+}
+function getNavEntries(){return [...document.querySelectorAll('#mainNav a')].map(a=>({a,label:a.textContent.replace(/^\s*\d+\s*/,'').trim(),group:a.dataset.group||'',num:a.querySelector('i')?.textContent||'',href:a.getAttribute('href')}))}
+function filterNavigation(query=''){
+  const q=query.trim().toLocaleLowerCase('pt-BR'),entries=getNavEntries();entries.forEach(({a,label,group})=>a.classList.toggle('nav-hidden',!!q&&!(`${label} ${group}`.toLocaleLowerCase('pt-BR').includes(q))));
+  document.querySelectorAll('#mainNav .nav-group').forEach(g=>{let next=g.nextElementSibling,visible=false;while(next&&!next.classList.contains('nav-group')){if(next.matches?.('a')&&!next.classList.contains('nav-hidden'))visible=true;next=next.nextElementSibling}g.classList.toggle('nav-hidden',!!q&&!visible)});
+}
+function buildCommandResults(query=''){
+  const box=document.getElementById('commandResults');if(!box)return;const q=query.trim().toLocaleLowerCase('pt-BR'),entries=getNavEntries().filter(x=>!q||`${x.label} ${x.group} ${x.num}`.toLocaleLowerCase('pt-BR').includes(q));
+  if(!entries.length){box.innerHTML='<div class="command-empty">Nenhuma ferramenta encontrada.</div>';return}
+  box.innerHTML=entries.map((x,i)=>`<button class="command-item ${i===0?'active':''}" type="button" data-target="${x.href}"><i>${x.num}</i><span>${escapeHtml(x.label)}<small>${escapeHtml(x.group)}</small></span></button>`).join('');
+  box.querySelectorAll('.command-item').forEach(btn=>btn.addEventListener('click',()=>{const target=btn.dataset.target;closeCommandPalette();document.querySelector(target)?.scrollIntoView({behavior:'smooth',block:'start'})}));
+}
+function openCommandPalette(){const modal=document.getElementById('commandPalette'),input=document.getElementById('commandInput');if(!modal)return;modal.hidden=false;buildCommandResults('');setTimeout(()=>input?.focus(),10)}
+function closeCommandPalette(){const modal=document.getElementById('commandPalette');if(modal)modal.hidden=true}
+function initWorkspaceChrome(){
+  const search=document.getElementById('navSearch');search?.addEventListener('input',e=>filterNavigation(e.target.value));
+  const input=document.getElementById('commandInput');input?.addEventListener('input',e=>buildCommandResults(e.target.value));input?.addEventListener('keydown',e=>{if(e.key==='Enter'){const first=document.querySelector('#commandResults .command-item');if(first){e.preventDefault();first.click()}}});
+  document.getElementById('commandPalette')?.addEventListener('click',e=>{if(e.target.id==='commandPalette')closeCommandPalette()});
+  document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){e.preventDefault();openCommandPalette()}if(e.key==='Escape')closeCommandPalette()});
+}
+function initNavigation(){const navLinks=[...document.querySelectorAll('.nav a')],sections=navLinks.map(a=>document.querySelector(a.getAttribute('href'))).filter(Boolean);const observer=new IntersectionObserver(entries=>{const visible=entries.filter(e=>e.isIntersecting).sort((a,b)=>b.intersectionRatio-a.intersectionRatio)[0];if(!visible)return;navLinks.forEach(a=>a.classList.toggle('active',a.getAttribute('href')==='#'+visible.target.id));const current=navLinks.find(a=>a.getAttribute('href')==='#'+visible.target.id);if(current)setText('currentSectionName',current.textContent.replace(/^\s*\d+\s*/,'').trim())},{rootMargin:'-18% 0px -67% 0px',threshold:[0,.1,.3,.6]});sections.forEach(s=>observer.observe(s));window.addEventListener('resize',()=>calcProjection())}
+renderAssets();bindFields();initWorkspaceChrome();updateAll();renderHistory();initNavigation();
+</script>
+</body>
+</html>
